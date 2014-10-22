@@ -3,14 +3,24 @@
  *
  * Created on 2.6.2006, 11:39:46 by burgetr
  */
-package org.fit.layout.impl;
+package org.fit.layout.cssbox;
 
-import java.util.*;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.Iterator;
+import java.util.Vector;
 
-import org.fit.cssbox.layout.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import org.fit.cssbox.layout.BlockReplacedBox;
+import org.fit.cssbox.layout.Box;
+import org.fit.cssbox.layout.ElementBox;
+import org.fit.cssbox.layout.InlineReplacedBox;
+import org.fit.cssbox.layout.ListItemBox;
+import org.fit.cssbox.layout.TextBox;
+import org.fit.cssbox.layout.Viewport;
+import org.fit.layout.model.ContentObject;
+import org.fit.layout.model.Page;
 import org.fit.layout.model.Rectangular;
 
 /**
@@ -18,7 +28,7 @@ import org.fit.layout.model.Rectangular;
  * 
  * @author burgetr
  */
-public class BoxNode extends TreeNode<Box>
+public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.model.Box
 {
     private static final long serialVersionUID = -7148914807204471399L;
     
@@ -29,6 +39,9 @@ public class BoxNode extends TreeNode<Box>
     /** Which percentage of the box area must be inside of another box in order
      * to consider it as a child box (from 0 to 1) */
     private static final double AREAP = 0.9;
+    
+    /** The page this box belongs to. */
+    protected Page page;
     
     /** Order in the box tree. It is assumed that the box tree obtained from the
      * rendering engine is sorted so that the siblings in the bottom are before the
@@ -64,10 +77,10 @@ public class BoxNode extends TreeNode<Box>
      * Creates a new node containing a box.
      * @param box the contained box
      */
-    public BoxNode(Box box)
+    public BoxNode(Box box, Page page)
     {
         super(box);
-        
+        this.page = page;
         //copy the bounds from the box
         if (box != null)
         {
@@ -554,7 +567,7 @@ public class BoxNode extends TreeNode<Box>
     /**
      * Returns the declared background color of the element or null when transparent.
      */
-    public Color getBgcolor()
+    public Color getBackgroundColor()
     {
         if (getBox() instanceof ElementBox)
             return ((ElementBox) getBox()).getBgcolor();
@@ -860,10 +873,117 @@ public class BoxNode extends TreeNode<Box>
             return ret;
         }
     }
+
+    //==================================================================================
+    
+    @Override
+    public Page getPage()
+    {
+        return page;
+    }
+
+    @Override
+    public float getUnderline()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public float getLineThrough()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public float getFontSize()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public float getFontStyle()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public float getFontWeight()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getX1()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getY1()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getX2()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getY2()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getWidth()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getHeight()
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public Color getColor()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getFontFamily()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ContentObject getContentObject()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
     
     //==================================================================================
     
-    public void drawExtent(BrowserCanvas canvas)
+    
+    /*public void drawExtent(BrowserCanvas canvas)
     {
         Graphics g = canvas.getImageGraphics();
         //getBox().drawExtent(g);
@@ -877,7 +997,7 @@ public class BoxNode extends TreeNode<Box>
         g.setColor(java.awt.Color.GREEN);
         r = getVisualBounds();
         g.drawRect(r.getX1(), r.getY1(), r.getWidth() - 1, r.getHeight() - 1);
-    }
+    }*/
 
 
 }

@@ -8,6 +8,7 @@ package org.fit.layout.impl;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.fit.layout.cssbox.BoxNode;
 import org.fit.layout.model.SearchableAreaContainer;
 
 

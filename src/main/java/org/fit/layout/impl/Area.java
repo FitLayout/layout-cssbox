@@ -15,6 +15,7 @@ import org.fit.cssbox.layout.ElementBox;
 import org.fit.cssbox.layout.InlineReplacedBox;
 import org.fit.cssbox.layout.ReplacedContent;
 import org.fit.cssbox.layout.TextBox;
+import org.fit.layout.cssbox.BoxNode;
 import org.fit.layout.model.Rectangular;
 
 /**
@@ -356,7 +357,7 @@ public class Area
     
     /**
      * Returns a vector of boxes that are inside of this area
-     * @return A vector containing the {@link org.burgetr.segm.BoxNode BoxNode} objects
+     * @return A vector containing the {@link org.fit.layout.cssbox.burgetr.segm.BoxNode BoxNode} objects
      */
     public Vector<BoxNode> getBoxes()
     {

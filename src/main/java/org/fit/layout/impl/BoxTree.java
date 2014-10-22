@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.util.*;
 
 import org.fit.cssbox.layout.*;
+import org.fit.layout.cssbox.BoxNode;
 import org.fit.layout.model.Rectangular;
 
 /**
