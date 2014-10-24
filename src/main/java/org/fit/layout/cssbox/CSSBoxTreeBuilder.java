@@ -27,6 +27,8 @@ import org.fit.cssbox.layout.ElementBox;
 import org.fit.cssbox.layout.Viewport;
 import org.fit.cssbox.pdf.PdfBrowserCanvas;
 import org.fit.layout.model.Page;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -39,6 +41,8 @@ import cz.vutbr.web.css.MediaSpec;
  */
 public class CSSBoxTreeBuilder
 {
+    private static Logger log = LoggerFactory.getLogger(CSSBoxTreeBuilder.class);
+
     /** The resulting page */
     protected PageImpl page;
     
@@ -88,7 +92,7 @@ public class CSSBoxTreeBuilder
         int p = mime.indexOf(';');
         if (p != -1)
             mime = mime.substring(0, p).trim();
-        System.out.println("File type: " + mime);
+        log.info("File type: " + mime);
         
         if (mime.equals("application/pdf"))
         {
@@ -139,7 +143,7 @@ public class CSSBoxTreeBuilder
             {
                 document.decrypt("");
             } catch (CryptographyException e) {
-                System.err.println("Error: Document is encrypted with a password.");
+                log.error("PDF Error: Document is encrypted with a password.");
                 System.exit(1);
             }
         }
@@ -151,24 +155,24 @@ public class CSSBoxTreeBuilder
     protected BoxNode buildTree(ElementBox rootbox)
     {
         //create the working list of nodes
-        //System.out.println("LIST");
+        log.trace("LIST");
         Vector<BoxNode> boxlist = new Vector<BoxNode>();
         order_counter = 1;
         createBoxList(rootbox, boxlist);
         
         //create the tree
-        //System.out.println("A1");
+        log.trace("A1");
         BoxNode root = createBoxTree(rootbox, boxlist, true); //create a nesting tree based on the content bounds
-        //System.out.println("A2");
+        log.trace("A2");
         Color bg = rootbox.getBgcolor();
         if (bg == null) bg = Color.WHITE;
         computeBackgrounds(root, bg); //compute the efficient background colors
-        //System.out.println("A2.5");
+        log.trace("A2.5");
         root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
-        //System.out.println("A3");
+        log.trace("A3");
         root = createBoxTree(rootbox, boxlist, false); //create the nesting tree based on the visual bounds
         root.recomputeBounds(); //compute the real bounds of each node
-        //System.out.println("A4");
+        log.trace("A4");
         return root;
     }
     
@@ -265,8 +269,6 @@ public class CSSBoxTreeBuilder
      */
     private void computeBackgrounds(BoxNode root, Color currentbg)
     {
-        //if (root.getBox() != null && root.getBox().toString().contains("body"))
-        //    System.out.println("jo!");
         Color newbg = root.getBackgroundColor();
         if (newbg == null)
             newbg = currentbg;
