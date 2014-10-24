@@ -7,6 +7,7 @@ package org.fit.layout.cssbox;
 
 import java.net.URL;
 
+import org.fit.layout.model.Box;
 import org.fit.layout.model.Page;
 
 /**
@@ -17,11 +18,13 @@ public class PageImpl implements Page
 {
     protected URL url;
     protected BoxNode root;
+    protected int width;
+    protected int height;
+    
 
-    public PageImpl(URL url, BoxNode root)
+    public PageImpl(URL url)
     {
         this.url = url;
-        this.root = root;
     }
     
     @Override
@@ -30,18 +33,34 @@ public class PageImpl implements Page
         return url;
     }
 
-    @Override
-    public int getWidth()
+    public Box getRoot()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return root;
     }
 
-    @Override
+    public void setRoot(BoxNode root)
+    {
+        this.root = root;
+    }
+
+    public int getWidth()
+    {
+        return width;
+    }
+
+    public void setWidth(int width)
+    {
+        this.width = width;
+    }
+
     public int getHeight()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return height;
+    }
+
+    public void setHeight(int height)
+    {
+        this.height = height;
     }
 
 }
