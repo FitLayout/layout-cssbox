@@ -17,11 +17,16 @@ import org.fit.cssbox.layout.Box;
 import org.fit.cssbox.layout.ElementBox;
 import org.fit.cssbox.layout.InlineReplacedBox;
 import org.fit.cssbox.layout.ListItemBox;
+import org.fit.cssbox.layout.ReplacedBox;
+import org.fit.cssbox.layout.ReplacedContent;
+import org.fit.cssbox.layout.ReplacedImage;
 import org.fit.cssbox.layout.TextBox;
 import org.fit.cssbox.layout.Viewport;
 import org.fit.layout.model.ContentObject;
 import org.fit.layout.model.Page;
 import org.fit.layout.model.Rectangular;
+
+import cz.vutbr.web.css.CSSProperty;
 
 /**
  * A node of a tree of visual blocks.
@@ -885,99 +890,94 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
     @Override
     public float getUnderline()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return getBox().getVisualContext().getTextDecoration().contains(CSSProperty.TextDecoration.UNDERLINE) ? 100.0f : 0.0f;
     }
 
     @Override
     public float getLineThrough()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return getBox().getVisualContext().getTextDecoration().contains(CSSProperty.TextDecoration.LINE_THROUGH) ? 100.0f : 0.0f;
     }
 
     @Override
     public float getFontSize()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return getBox().getVisualContext().getFont().getSize();
     }
 
     @Override
     public float getFontStyle()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return getBox().getVisualContext().getFont().isItalic() ? 100.0f : 0.0f;
     }
 
     @Override
     public float getFontWeight()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return getBox().getVisualContext().getFont().isBold() ? 100.0f : 0.0f;
     }
 
     @Override
     public int getX1()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return getVisualBounds().getX1();
     }
 
     @Override
     public int getY1()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return getVisualBounds().getY1();
     }
 
     @Override
     public int getX2()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return getVisualBounds().getX2();
     }
 
     @Override
     public int getY2()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return getVisualBounds().getY2();
     }
 
     @Override
     public int getWidth()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return getVisualBounds().getWidth();
     }
 
     @Override
     public int getHeight()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return getVisualBounds().getHeight();
     }
 
     @Override
     public Color getColor()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return getBox().getVisualContext().getColor();
     }
 
     @Override
     public String getFontFamily()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return getBox().getVisualContext().getFont().getName();
     }
 
     @Override
     public ContentObject getContentObject()
     {
-        // TODO Auto-generated method stub
-        return null;
+        if (getBox().isReplaced())
+        {
+            ReplacedContent content = ((ReplacedBox) getBox()).getContentObj();
+            if (content instanceof ReplacedImage)
+                return new ContentImageImpl((ReplacedImage) content);
+            else
+                return null;
+        }
+        else
+            return null;
     }
     
     //==================================================================================
