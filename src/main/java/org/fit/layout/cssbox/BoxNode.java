@@ -902,7 +902,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
     @Override
     public float getFontSize()
     {
-        return getBox().getVisualContext().getFont().getSize();
+        return getBox().getVisualContext().getFont().getSize2D();
     }
 
     @Override
