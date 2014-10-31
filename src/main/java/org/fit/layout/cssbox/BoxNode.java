@@ -116,6 +116,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
         return nearestParent == null;
     }
     
+    @Override
     public String toString()
     {
         Box box = getBox();
@@ -161,7 +162,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
             return false;
     }
     
-    
+    @Override
     public boolean isBackgroundSeparated()
     {
         return backgroundSeparated;
@@ -279,6 +280,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
      * Returns the bounds of the box as they visually appear to the user.
      * @return the visual bounds
      */
+    @Override
     public Rectangular getVisualBounds()
     {
         if (visual == null)
@@ -410,6 +412,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
     /**
      * @return <code>true</code> if the box has a top border
      */
+    @Override
     public boolean hasTopBorder()
     {
         Box box = getBox();
@@ -423,6 +426,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
      * Obtains the top border of the box
      * @return the width of the border or 0 when there is no border
      */
+    @Override
     public int getTopBorder()
     {
         Box box = getBox();
@@ -435,6 +439,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
     /**
      * @return <code>true</code> if the box has a bottom border
      */
+    @Override
     public boolean hasBottomBorder()
     {
         Box box = getBox();
@@ -448,6 +453,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
      * Obtains the bottom border of the box
      * @return the width of the border or 0 when there is no border
      */
+    @Override
     public int getBottomBorder()
     {
         Box box = getBox();
@@ -460,6 +466,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
     /**
      * @return <code>true</code> if the box has a left border
      */
+    @Override
     public boolean hasLeftBorder()
     {
         Box box = getBox();
@@ -473,6 +480,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
      * Obtains the left border of the box
      * @return the width of the border or 0 when there is no border
      */
+    @Override
     public int getLeftBorder()
     {
         Box box = getBox();
@@ -485,6 +493,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
     /**
      * @return <code>true</code> if the box has a right border
      */
+    @Override
     public boolean hasRightBorder()
     {
         Box box = getBox();
@@ -498,6 +507,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
      * Obtains the right border of the box
      * @return the width of the border or 0 when there is no border
      */
+    @Override
     public int getRightBorder()
     {
         Box box = getBox();
@@ -572,6 +582,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
     /**
      * Returns the declared background color of the element or null when transparent.
      */
+    @Override
     public Color getBackgroundColor()
     {
         if (getBox() instanceof ElementBox)
@@ -593,6 +604,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
     /**
      * @return the parent box of this box in the tree
      */
+    @Override
     public BoxNode getParentBox()
     {
         return (BoxNode) getParent();
@@ -603,6 +615,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
      * @param index the child index
      * @return the specified child box
      */
+    @Override
     public BoxNode getChildBox(int index)
     {
         return (BoxNode) getChildAt(index);
@@ -611,6 +624,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
     /**
 	 * @return the total bounds of the node
 	 */
+    @Override
 	public Rectangular getBounds()
 	{
 		return bounds;
@@ -619,6 +633,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
 	/**
 	 * @return the content bounds of the node
 	 */
+    @Override
 	public Rectangular getContentBounds()
 	{
 		return content;
@@ -856,6 +871,7 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
      * @return all the text contained in this box and its subboxes.
      * Contents of the individual text boxes are separated by spaces.
      */
+    @Override
     public String getText()
     {
         return recursiveGetText(this);
@@ -979,25 +995,16 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
         else
             return null;
     }
-    
-    //==================================================================================
-    
-    
-    /*public void drawExtent(BrowserCanvas canvas)
-    {
-        Graphics g = canvas.getImageGraphics();
-        //getBox().drawExtent(g);
-        
-        //draw the visual content box
-        g.setColor(java.awt.Color.RED);
-        Rectangular r = getBounds();
-        g.drawRect(r.getX1(), r.getY1(), r.getWidth() - 1, r.getHeight() - 1);
-        
-        //draw the visual content box
-        g.setColor(java.awt.Color.GREEN);
-        r = getVisualBounds();
-        g.drawRect(r.getX1(), r.getY1(), r.getWidth() - 1, r.getHeight() - 1);
-    }*/
 
+    @Override
+    public Type getType()
+    {
+        if (getBox().isReplaced())
+            return Type.REPLACED_CONTENT;
+        else if (getBox() instanceof TextBox)
+            return Type.TEXT_CONTENT;
+        else
+            return Type.ELEMENT;
+    }
 
 }
