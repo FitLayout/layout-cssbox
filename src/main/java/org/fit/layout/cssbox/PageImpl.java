@@ -33,6 +33,7 @@ public class PageImpl implements Page
         return url;
     }
 
+    @Override
     public Box getRoot()
     {
         return root;
