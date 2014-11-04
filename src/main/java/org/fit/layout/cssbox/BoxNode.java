@@ -25,6 +25,7 @@ import org.fit.cssbox.layout.Viewport;
 import org.fit.layout.model.ContentObject;
 import org.fit.layout.model.Page;
 import org.fit.layout.model.Rectangular;
+import org.w3c.dom.Node;
 
 import cz.vutbr.web.css.CSSProperty;
 
@@ -1005,6 +1006,61 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
             return Type.TEXT_CONTENT;
         else
             return Type.ELEMENT;
+    }
+
+    @Override
+    public Node getDOMNode()
+    {
+        return getBox().getNode();
+    }
+
+    @Override
+    public DisplayType getDisplayType()
+    {
+        Box box = getBox();
+        if (box instanceof ElementBox)
+        {
+            CSSProperty.Display display = ((ElementBox) box).getDisplay();
+            switch (display)
+            {
+                case BLOCK:
+                    return DisplayType.BLOCK;
+                case INLINE:
+                    return DisplayType.INLINE;
+                case INLINE_BLOCK:
+                    return DisplayType.INLINE_BLOCK;
+                case INLINE_TABLE:
+                    return DisplayType.INLINE_TABLE;
+                case LIST_ITEM:
+                    return DisplayType.LIST_ITEM;
+                case NONE:
+                    return DisplayType.NONE;
+                case RUN_IN:
+                    return DisplayType.RUN_IN;
+                case TABLE:
+                    return DisplayType.TABLE;
+                case TABLE_CAPTION:
+                    return DisplayType.TABLE_CAPTION;
+                case TABLE_CELL:
+                    return DisplayType.TABLE_CELL;
+                case TABLE_COLUMN:
+                    return DisplayType.TABLE_COLUMN;
+                case TABLE_COLUMN_GROUP:
+                    return DisplayType.TABLE_COLUMN_GROUP;
+                case TABLE_FOOTER_GROUP:
+                    return DisplayType.TABLE_FOOTER_GROUP;
+                case TABLE_HEADER_GROUP:
+                    return DisplayType.TABLE_HEADER_GROUP;
+                case TABLE_ROW:
+                    return DisplayType.TABLE_ROW;
+                case TABLE_ROW_GROUP:
+                    return DisplayType.TABLE_ROW_GROUP;
+                default:
+                    return null;
+            }
+        }
+        else
+            return null;
     }
 
 }
