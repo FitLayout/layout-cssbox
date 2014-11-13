@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Vector;
@@ -43,6 +44,8 @@ public class CSSBoxTreeBuilder
 {
     private static Logger log = LoggerFactory.getLogger(CSSBoxTreeBuilder.class);
 
+    protected URL pageUrl;
+    
     /** The resulting page */
     protected PageImpl page;
     
@@ -60,10 +63,9 @@ public class CSSBoxTreeBuilder
     
     public void parse(URL url) throws IOException, SAXException
     {
-        PageImpl pg = page = new PageImpl(url);
-        
         //render the page
         BrowserCanvas canvas = renderUrl(url, pageSize);
+        PageImpl pg = page = new PageImpl(pageUrl);
         
         //construct the box tree
         ElementBox rootbox = canvas.getViewport();
@@ -73,6 +75,11 @@ public class CSSBoxTreeBuilder
         pg.setRoot(root);
         pg.setWidth(rootbox.getWidth());
         pg.setHeight(rootbox.getHeight());
+    }
+    
+    public void parse(String urlstring) throws MalformedURLException, IOException, SAXException
+    {
+        parse(new URL(urlstring));
     }
     
     public Page getPage()
@@ -85,6 +92,7 @@ public class CSSBoxTreeBuilder
     protected BrowserCanvas renderUrl(URL url, Dimension pageSize) throws IOException, SAXException
     {
         DocumentSource src = new DefaultDocumentSource(url);
+        pageUrl = src.getURL();
         InputStream is = src.getInputStream();
         String mime = src.getContentType();
         if (mime == null)
@@ -171,6 +179,7 @@ public class CSSBoxTreeBuilder
         root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
         log.trace("A3");
         root = createBoxTree(rootbox, boxlist, false); //create the nesting tree based on the visual bounds
+        root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
         root.recomputeBounds(); //compute the real bounds of each node
         log.trace("A4");
         return root;
