@@ -294,13 +294,17 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
         Box box = getBox();
         Rectangular ret = null;
         
-        if (box instanceof ElementBox)
+        if (box instanceof Viewport)
+        {
+            ret = new Rectangular(((Viewport) box).getClippedBounds());
+        }
+        else if (box instanceof ElementBox)
         {
             ElementBox elem = (ElementBox) box;
             //one border only -- the box represents the border only
             if (getBorderCount() == 1 && !isBackgroundSeparated())
             {
-            	Rectangular b = new Rectangular(elem.getAbsoluteBorderBounds().intersection(elem.getClipBlock().getAbsoluteContentBounds())); //clipped absolute bounds
+            	Rectangular b = new Rectangular(elem.getAbsoluteBorderBounds().intersection(elem.getClipBlock().getClippedContentBounds())); //clipped absolute bounds
             	if (hasTopBorder())
             		ret = new Rectangular(b.getX1(), b.getY1(), b.getX2(), b.getY1() + elem.getBorder().top - 1);
             	else if (hasBottomBorder())
@@ -313,12 +317,12 @@ public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.mo
             //at least two borders or a border and background - take the border bounds
             else if (getBorderCount() >= 2 || (getBorderCount() == 1 && isBackgroundSeparated()))
             {
-                ret = new Rectangular(elem.getAbsoluteBorderBounds().intersection(elem.getClipBlock().getAbsoluteContentBounds()));
+                ret = new Rectangular(elem.getAbsoluteBorderBounds().intersection(elem.getClipBlock().getClippedContentBounds()));
             }
             //no border but the background is different from the parent
             else if (isBackgroundSeparated())
             {
-                ret = new Rectangular(elem.getAbsoluteBackgroundBounds().intersection(elem.getClipBlock().getAbsoluteContentBounds()));
+                ret = new Rectangular(elem.getAbsoluteBackgroundBounds().intersection(elem.getClipBlock().getClippedContentBounds()));
             }
             //no visual separators, consider the contents
             else
