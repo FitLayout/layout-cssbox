@@ -10,8 +10,6 @@ import java.awt.Rectangle;
 import java.util.Iterator;
 import java.util.Vector;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import org.fit.cssbox.layout.BlockReplacedBox;
 import org.fit.cssbox.layout.Box;
 import org.fit.cssbox.layout.ElementBox;
@@ -22,6 +20,7 @@ import org.fit.cssbox.layout.ReplacedContent;
 import org.fit.cssbox.layout.ReplacedImage;
 import org.fit.cssbox.layout.TextBox;
 import org.fit.cssbox.layout.Viewport;
+import org.fit.layout.impl.GenericTreeNode;
 import org.fit.layout.model.ContentObject;
 import org.fit.layout.model.Page;
 import org.fit.layout.model.Rectangular;
@@ -34,10 +33,8 @@ import cz.vutbr.web.css.CSSProperty;
  * 
  * @author burgetr
  */
-public class BoxNode extends DefaultMutableTreeNode implements org.fit.layout.model.Box
+public class BoxNode extends GenericTreeNode<Box> implements org.fit.layout.model.Box
 {
-    private static final long serialVersionUID = -7148914807204471399L;
-    
     /** Overlapping threshold - the corners are considered to overlap if the boxes
      *  share more than OVERLAP pixels */
     private static final int OVERLAP = 2;
