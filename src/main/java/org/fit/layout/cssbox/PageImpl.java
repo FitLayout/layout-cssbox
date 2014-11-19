@@ -6,9 +6,11 @@
 package org.fit.layout.cssbox;
 
 import java.net.URL;
+import java.util.Vector;
 
 import org.fit.layout.model.Box;
 import org.fit.layout.model.Page;
+import org.fit.layout.model.Rectangular;
 
 /**
  * 
@@ -44,6 +46,7 @@ public class PageImpl implements Page
         this.root = root;
     }
 
+    @Override
     public int getWidth()
     {
         return width;
@@ -54,6 +57,7 @@ public class PageImpl implements Page
         this.width = width;
     }
 
+    @Override
     public int getHeight()
     {
         return height;
@@ -64,4 +68,47 @@ public class PageImpl implements Page
         this.height = height;
     }
 
+    @Override
+    public Box getBoxAt(int x, int y)
+    {
+        return recursiveGetBoxAt(root, x, y);
+    }
+    
+    protected Box recursiveGetBoxAt(Box root, int x, int y)
+    {
+        if (root.getBounds().contains(x, y))
+        {
+            for (int i = 0; i < root.getChildCount(); i++)
+            {
+                Box ret = recursiveGetBoxAt(root.getChildBox(i), x, y);
+                if (ret != null)
+                    return ret;
+            }
+            return root;
+        }
+        else
+            return null;
+    }
+
+    @Override
+    public Vector<Box> getBoxesInRegion(Rectangular r)
+    {
+        Vector<Box> ret = new Vector<Box>();
+        recursiveGetBoxesInRegion(root, r, ret);
+        return ret;
+    }
+    
+    private void recursiveGetBoxesInRegion(Box root, Rectangular r, Vector<Box> result)
+    {
+        if (r.intersects(root.getBounds()))
+        {
+            result.add(root);
+        }
+        else
+        {
+            for (int i = 0; i < root.getChildCount(); i++)
+                recursiveGetBoxesInRegion(root.getChildBox(i), r, result);
+        }
+    }
+    
 }
