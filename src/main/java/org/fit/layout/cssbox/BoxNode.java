@@ -33,7 +33,7 @@ import cz.vutbr.web.css.CSSProperty;
  * 
  * @author burgetr
  */
-public class BoxNode extends GenericTreeNode<Box> implements org.fit.layout.model.Box
+public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
 {
     /** Overlapping threshold - the corners are considered to overlap if the boxes
      *  share more than OVERLAP pixels */
@@ -42,6 +42,9 @@ public class BoxNode extends GenericTreeNode<Box> implements org.fit.layout.mode
     /** Which percentage of the box area must be inside of another box in order
      * to consider it as a child box (from 0 to 1) */
     private static final double AREAP = 0.9;
+    
+    /** The CSSBox box that forms this node */
+    protected Box box;
     
     /** The page this box belongs to. */
     protected Page page;
@@ -82,7 +85,8 @@ public class BoxNode extends GenericTreeNode<Box> implements org.fit.layout.mode
      */
     public BoxNode(Box box, Page page)
     {
-        super(box);
+        super();
+        this.box = box;
         this.page = page;
         //copy the bounds from the box
         if (box != null)
@@ -600,7 +604,7 @@ public class BoxNode extends GenericTreeNode<Box> implements org.fit.layout.mode
      */
     public Box getBox()
     {
-        return (Box) getUserObject();
+        return box;
     }
     
     /**
