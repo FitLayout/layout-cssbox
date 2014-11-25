@@ -97,6 +97,12 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
         }
     }
 
+    @Override
+    public int getId()
+    {
+        return getOrder();
+    }
+    
     /**
      * @return the order in the display tree
      */
