@@ -24,6 +24,7 @@ import org.fit.layout.impl.GenericTreeNode;
 import org.fit.layout.model.ContentObject;
 import org.fit.layout.model.Page;
 import org.fit.layout.model.Rectangular;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import cz.vutbr.web.css.CSSProperty;
@@ -574,6 +575,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
      * Checks whether the box is inside of the visible area and the text is visible and its color is different from the background
      * @return <code>true</code> if the box is visible
      */
+    @Override
     public boolean isVisible()
     {
         Box box = getBox();
@@ -1013,10 +1015,19 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
             return Type.ELEMENT;
     }
 
-    @Override
     public Node getDOMNode()
     {
         return getBox().getNode();
+    }
+    
+    @Override
+    public String getTagName()
+    {
+        Node node = getDOMNode();
+        if (node != null && node.getNodeType() == Node.ELEMENT_NODE)
+            return ((Element) node).getTagName().toLowerCase();
+        else
+            return null;
     }
 
     @Override
