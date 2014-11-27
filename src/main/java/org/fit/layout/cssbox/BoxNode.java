@@ -920,13 +920,13 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
     @Override
     public float getUnderline()
     {
-        return getBox().getVisualContext().getTextDecoration().contains(CSSProperty.TextDecoration.UNDERLINE) ? 100.0f : 0.0f;
+        return getBox().getVisualContext().getTextDecoration().contains(CSSProperty.TextDecoration.UNDERLINE) ? 1.0f : 0.0f;
     }
 
     @Override
     public float getLineThrough()
     {
-        return getBox().getVisualContext().getTextDecoration().contains(CSSProperty.TextDecoration.LINE_THROUGH) ? 100.0f : 0.0f;
+        return getBox().getVisualContext().getTextDecoration().contains(CSSProperty.TextDecoration.LINE_THROUGH) ? 1.0f : 0.0f;
     }
 
     @Override
@@ -938,13 +938,13 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
     @Override
     public float getFontStyle()
     {
-        return getBox().getVisualContext().getFont().isItalic() ? 100.0f : 0.0f;
+        return getBox().getVisualContext().getFont().isItalic() ? 1.0f : 0.0f;
     }
 
     @Override
     public float getFontWeight()
     {
-        return getBox().getVisualContext().getFont().isBold() ? 100.0f : 0.0f;
+        return getBox().getVisualContext().getFont().isBold() ? 1.0f : 0.0f;
     }
 
     @Override
