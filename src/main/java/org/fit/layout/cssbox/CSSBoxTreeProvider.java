@@ -10,8 +10,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.fit.layout.api.BoxTreeProvider;
-import org.fit.layout.impl.BaseParametrizedOperation;
+import org.fit.layout.impl.BaseBoxTreeProvider;
 import org.fit.layout.model.Page;
 import org.xml.sax.SAXException;
 
@@ -20,7 +19,7 @@ import org.xml.sax.SAXException;
  * 
  * @author burgetr
  */
-public class CSSBoxTreeProvider extends BaseParametrizedOperation implements BoxTreeProvider
+public class CSSBoxTreeProvider extends BaseBoxTreeProvider
 {
     private URL url;
     private int width;
