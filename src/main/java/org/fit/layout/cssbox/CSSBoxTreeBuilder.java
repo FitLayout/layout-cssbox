@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import org.apache.pdfbox.exceptions.CryptographyException;
+import org.apache.pdfbox.exceptions.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.fit.cssbox.css.CSSNorm;
 import org.fit.cssbox.css.DOMAnalyzer;
@@ -150,7 +151,7 @@ public class CSSBoxTreeBuilder
             try
             {
                 document.decrypt("");
-            } catch (CryptographyException e) {
+            } catch (CryptographyException | InvalidPasswordException e) {
                 log.error("PDF Error: Document is encrypted with a password.");
                 System.exit(1);
             }
