@@ -1028,9 +1028,44 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
     @Override
     public String getTagName()
     {
-        Node node = getDOMNode();
+        final Node node = getDOMNode();
         if (node != null && node.getNodeType() == Node.ELEMENT_NODE)
             return ((Element) node).getTagName().toLowerCase();
+        else
+            return null;
+    }
+
+    @Override
+    public String getAttribute(String name)
+    {
+        final Node node = getDOMNode();
+        if (node != null)
+        {
+            if (node.getNodeType() == Node.ELEMENT_NODE)
+            {
+                final Element el = (Element) node;
+                if (el.hasAttribute(name))
+                    return el.getAttribute(name);
+                else
+                    return null;
+            }
+            else if (node.getNodeType() == Node.TEXT_NODE) //text nodes -- try parent //TODO how to propagate from ancestors correctly?
+            {
+                final Node pnode = node.getParentNode();
+                if (pnode != null && pnode.getNodeType() == Node.ELEMENT_NODE)
+                {
+                    final Element parent = (Element) pnode;
+                    if (parent.hasAttribute(name))
+                        return parent.getAttribute(name);
+                    else
+                        return null;
+                }
+                else
+                    return null;
+            }
+            else
+                return null;
+        }
         else
             return null;
     }
