@@ -252,12 +252,11 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
      */
     private Rectangular getMinimalVisualBounds()
     {
-    	//return getBox().getMinimalAbsoluteBounds();
-        Box box = getBox();
+        final Box box = getBox();
         if (box instanceof TextBox)
-            return new Rectangular(box.getAbsoluteBounds().intersection(box.getClipBlock().getAbsoluteContentBounds()));
+            return new Rectangular(box.getAbsoluteBounds().intersection(box.getClipBlock().getClippedContentBounds()));
         else if (box != null && box.isReplaced())
-            return new Rectangular(box.getMinimalAbsoluteBounds().intersection(box.getClipBlock().getAbsoluteContentBounds()));
+            return new Rectangular(box.getMinimalAbsoluteBounds().intersection(box.getClipBlock().getClippedContentBounds()));
         else
         {
         	Rectangular ret = null;
@@ -277,7 +276,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
             //if nothing has been found return the top left corner
             if (ret == null)
             {
-                Rectangle b = box.getAbsoluteBounds().intersection(box.getClipBlock().getAbsoluteContentBounds());
+                Rectangle b = box.getAbsoluteBounds().intersection(box.getClipBlock().getClippedContentBounds());
             	return new Rectangular(b.x, b.y, b.x, b.y);
             }
             else
@@ -402,7 +401,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
         //clip with the clipping bounds
         if (box.getClipBlock() != null)
         {
-            Rectangular clip = new Rectangular(box.getClipBlock().getAbsoluteContentBounds());
+            Rectangular clip = new Rectangular(box.getClipBlock().getClippedContentBounds());
             ret = ret.intersection(clip);
         }
         
