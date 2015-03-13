@@ -1041,25 +1041,33 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
         final Node node = getDOMNode();
         if (node != null)
         {
-            if (node.getNodeType() == Node.ELEMENT_NODE)
+            if ("href".equals(name))
+                return getAncestorAttribute(node, "a", name);
+            else
+                return getElementAttribute(node, name);
+        }
+        else
+            return null;
+    }
+
+    protected String getElementAttribute(Node node, String attrName)
+    {
+        if (node.getNodeType() == Node.ELEMENT_NODE)
+        {
+            final Element el = (Element) node;
+            if (el.hasAttribute(attrName))
+                return el.getAttribute(attrName);
+            else
+                return null;
+        }
+        else if (node.getNodeType() == Node.TEXT_NODE) //text nodes -- try parent //TODO how to propagate from ancestors correctly?
+        {
+            final Node pnode = node.getParentNode();
+            if (pnode != null && pnode.getNodeType() == Node.ELEMENT_NODE)
             {
-                final Element el = (Element) node;
-                if (el.hasAttribute(name))
-                    return el.getAttribute(name);
-                else
-                    return null;
-            }
-            else if (node.getNodeType() == Node.TEXT_NODE) //text nodes -- try parent //TODO how to propagate from ancestors correctly?
-            {
-                final Node pnode = node.getParentNode();
-                if (pnode != null && pnode.getNodeType() == Node.ELEMENT_NODE)
-                {
-                    final Element parent = (Element) pnode;
-                    if (parent.hasAttribute(name))
-                        return parent.getAttribute(name);
-                    else
-                        return null;
-                }
+                final Element parent = (Element) pnode;
+                if (parent.hasAttribute(attrName))
+                    return parent.getAttribute(attrName);
                 else
                     return null;
             }
@@ -1069,7 +1077,25 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
         else
             return null;
     }
-
+    
+    protected String getAncestorAttribute(Node node, String elementName, String attrName)
+    {
+        Node cur = node;
+        //find the parent with the given name
+        while (cur.getNodeType() != Node.ELEMENT_NODE || !elementName.equals(cur.getNodeName()))
+        {
+            cur = cur.getParentNode();
+            if (cur == null)
+                return null;
+        }
+        //read the attribute
+        final Element el = (Element) cur;
+        if (el.hasAttribute(attrName))
+            return el.getAttribute(attrName);
+        else
+            return null;
+    }
+    
     @Override
     public DisplayType getDisplayType()
     {
