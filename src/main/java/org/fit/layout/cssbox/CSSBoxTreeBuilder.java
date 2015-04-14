@@ -132,6 +132,7 @@ public class CSSBoxTreeBuilder
             BrowserCanvas contentCanvas = new BrowserCanvas(da.getRoot(), da, src.getURL());
             contentCanvas.getConfig().setLoadImages(false);
             contentCanvas.getConfig().setLoadBackgroundImages(false);
+            contentCanvas.getConfig().setReplaceImagesWithAlt(true);
             contentCanvas.createLayout(pageSize);
             
             src.close();
