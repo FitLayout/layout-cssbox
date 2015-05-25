@@ -191,7 +191,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
     }
 
     /**
-     * @param efficientBackground the efficientBackground to set
+     * @param bgcolor the efficientBackground to set
      */
     public void setEfficientBackground(Color bgcolor)
     {
@@ -817,7 +817,6 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
      * @param list the list of nodes to test
      * @param full when set to true, all the nodes within the box content bounds are considered.
      *          Otherwise, only the boxes within the visual bounds are considered.
-     * @return the list of nodes from the collection that are located inside of this node's box
      */
     public void markNodesInside(Vector<BoxNode> list, boolean full)
     {
