@@ -110,6 +110,26 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
     {
         this.height = height;
     }
+    
+    @Override
+    public Object[] getParamRange(String name)
+    {
+        Object[] ret = new Object[2];
+        switch (name)
+        {
+            case "width":
+            case "height":
+                ret[0] = 0;
+                ret[1] = 9999;
+                return ret;
+            case "url":
+                ret[0] = 0;
+                ret[1] = 64;
+                return ret;
+            default:
+                return super.getParamRange(name);
+        }
+    }
 
     @Override
     public Page getPage()
