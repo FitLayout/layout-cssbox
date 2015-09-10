@@ -21,6 +21,9 @@ import org.fit.cssbox.layout.ReplacedImage;
 import org.fit.cssbox.layout.TextBox;
 import org.fit.cssbox.layout.Viewport;
 import org.fit.layout.impl.GenericTreeNode;
+import org.fit.layout.model.Border;
+import org.fit.layout.model.Border.Side;
+import org.fit.layout.model.Border.Style;
 import org.fit.layout.model.ContentObject;
 import org.fit.layout.model.Page;
 import org.fit.layout.model.Rectangular;
@@ -28,6 +31,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import cz.vutbr.web.css.CSSProperty;
+import cz.vutbr.web.css.NodeData;
+import cz.vutbr.web.css.TermColor;
 
 /**
  * A node of a tree of visual blocks.
@@ -527,6 +532,70 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
             return ((ElementBox) box).getBorder().right;
         else
             return 0;
+    }
+
+    @Override
+    public Border getBorderStyle(Side side)
+    {
+        Box box = getBox();
+        if (box instanceof ElementBox)
+        {
+            final NodeData style = ((ElementBox) box).getStyle();
+            TermColor tclr = style.getValue(TermColor.class, "border-"+side+"-color");
+            CSSProperty.BorderStyle bst = style.getProperty("border-"+side+"-style");
+            
+            Color clr = null;
+            if (tclr != null)
+                clr = tclr.getValue();
+            if (clr == null)
+            {
+                clr = box.getVisualContext().getColor();
+                if (clr == null)
+                    clr = Color.BLACK;
+            }
+
+            int rwidth = 0;
+            switch (side)
+            {
+                case BOTTOM:
+                    rwidth = getBottomBorder();
+                    break;
+                case LEFT:
+                    rwidth = getLeftBorder();
+                    break;
+                case RIGHT:
+                    rwidth = getRightBorder();
+                    break;
+                case TOP:
+                    rwidth = getTopBorder();
+                    break;
+            }
+            
+            Border.Style rstyle;
+            switch (bst)
+            {
+                case NONE:
+                case HIDDEN:
+                    rstyle = Style.NONE;
+                    break;
+                case DASHED:
+                    rstyle = Style.DASHED;
+                    break;
+                case DOTTED:
+                    rstyle = Style.DOTTED;
+                    break;
+                case DOUBLE:
+                    rstyle = Style.DOUBLE;
+                    break;
+                default:
+                    rstyle = Style.SOLID;
+                    break;
+            }
+            
+            return new Border(rwidth, rstyle, clr);
+        }
+        else
+            return null;
     }
 
     /**
