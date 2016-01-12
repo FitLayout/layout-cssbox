@@ -30,6 +30,8 @@ import org.fit.layout.model.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import cz.vutbr.web.css.MediaSpec;
@@ -44,6 +46,7 @@ public class CSSBoxTreeBuilder
     private static Logger log = LoggerFactory.getLogger(CSSBoxTreeBuilder.class);
 
     protected URL pageUrl;
+    protected String pageTitle;
     
     /** The resulting page */
     protected PageImpl page;
@@ -65,6 +68,7 @@ public class CSSBoxTreeBuilder
         //render the page
         BrowserCanvas canvas = renderUrl(url, pageSize);
         PageImpl pg = page = new PageImpl(pageUrl);
+        pg.setTitle(pageTitle);
         
         //construct the box tree
         ElementBox rootbox = canvas.getViewport();
@@ -104,13 +108,15 @@ public class CSSBoxTreeBuilder
         if (mime.equals("application/pdf"))
         {
             PDDocument doc = loadPdf(is);
-            BrowserCanvas canvas = new PdfBrowserCanvas(doc, null, pageSize, src.getURL()); 
+            BrowserCanvas canvas = new PdfBrowserCanvas(doc, null, pageSize, src.getURL());
+            pageTitle = "";
             return canvas;
         }
         else
         {
             DOMSource parser = new DefaultDOMSource(src);
             Document doc = parser.parse();
+            pageTitle = findPageTitle(doc);
             
             String encoding = parser.getCharset();
             
@@ -146,6 +152,21 @@ public class CSSBoxTreeBuilder
         PDDocument document = null;
         document = PDDocument.load(is);
         return document;
+    }
+    
+    private String findPageTitle(Document doc)
+    {
+        NodeList heads = doc.getElementsByTagName("head");
+        if (heads.getLength() > 0)
+        {
+            Element head = (Element) heads.item(0);
+            NodeList titles = head.getElementsByTagName("title");
+            if (titles.getLength() > 0)
+            {
+                return titles.item(0).getTextContent();
+            }
+        }
+        return "";
     }
     
     //===================================================================
