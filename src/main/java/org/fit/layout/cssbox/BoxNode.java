@@ -33,6 +33,7 @@ import org.w3c.dom.Node;
 import cz.vutbr.web.css.CSSProperty;
 import cz.vutbr.web.css.NodeData;
 import cz.vutbr.web.css.TermColor;
+import cz.vutbr.web.css.CSSProperty.BorderStyle;
 
 /**
  * A node of a tree of visual blocks.
@@ -543,6 +544,8 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
             final NodeData style = ((ElementBox) box).getStyle();
             TermColor tclr = style.getValue(TermColor.class, "border-"+side+"-color");
             CSSProperty.BorderStyle bst = style.getProperty("border-"+side+"-style");
+            if (bst == null)
+                bst = BorderStyle.NONE;
             
             Color clr = null;
             if (tclr != null)
