@@ -598,7 +598,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
             return new Border(rwidth, rstyle, clr);
         }
         else
-            return null;
+            return new Border();
     }
 
     /**
