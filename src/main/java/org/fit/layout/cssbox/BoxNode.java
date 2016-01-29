@@ -385,7 +385,11 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
         Box box = getBox();
         Rectangular ret = null;
         
-        if (box instanceof ElementBox)
+        if (box instanceof Viewport)
+        {
+            ret = new Rectangular(((Viewport) box).getClippedBounds());
+        }
+        else if (box instanceof ElementBox)
         {
             ElementBox elem = (ElementBox) box;
             //at least one border - take the border bounds
