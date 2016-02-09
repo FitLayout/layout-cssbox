@@ -1101,6 +1101,12 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
     }
     
     @Override
+    public int getSourceNodeId()
+    {
+        return System.identityHashCode(getBox().getNode());
+    }
+
+    @Override
     public String getTagName()
     {
         final Node node = getDOMNode();
