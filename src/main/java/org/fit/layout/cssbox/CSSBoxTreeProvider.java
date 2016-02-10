@@ -24,22 +24,25 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
     private URL url;
     private int width;
     private int height;
+    private boolean useVisualBounds;
     
-    private final String[] paramNames = { "url", "width", "height" };
-    private final ValueType[] paramTypes = { ValueType.STRING, ValueType.INTEGER, ValueType.INTEGER };
+    private final String[] paramNames = { "url", "width", "height", "useVisualBounds" };
+    private final ValueType[] paramTypes = { ValueType.STRING, ValueType.INTEGER, ValueType.INTEGER, ValueType.BOOLEAN };
 
     public CSSBoxTreeProvider()
     {
         url = null;
         width = 1200;
         height = 800;
+        useVisualBounds = true;
     }
     
-    public CSSBoxTreeProvider(URL url, int width, int height)
+    public CSSBoxTreeProvider(URL url, int width, int height, boolean useVisualBounds)
     {
         this.url = url;
         this.width = width;
         this.height = height;
+        this.useVisualBounds = useVisualBounds;
     }
 
     @Override
@@ -111,6 +114,16 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
         this.height = height;
     }
     
+    public boolean getUseVisualBounds()
+    {
+        return useVisualBounds;
+    }
+
+    public void setUseVisualBounds(boolean useVisualBounds)
+    {
+        this.useVisualBounds = useVisualBounds;
+    }
+
     @Override
     public Object[] getParamRange(String name)
     {
@@ -134,7 +147,7 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
     @Override
     public Page getPage()
     {
-        CSSBoxTreeBuilder build = new CSSBoxTreeBuilder(new Dimension(width, height));
+        CSSBoxTreeBuilder build = new CSSBoxTreeBuilder(new Dimension(width, height), useVisualBounds);
         try {
             build.parse(url);
             return build.getPage();

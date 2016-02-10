@@ -54,13 +54,17 @@ public class CSSBoxTreeBuilder
     /** Requested page dimensions */
     protected Dimension pageSize;
     
+    /** Use real visual bounds instead of the element content bounds for building the box hierarchy */
+    protected boolean useVisualBounds;
+    
     /** a counter for assigning the box order */
     private int order_counter;
     
    
-    public CSSBoxTreeBuilder(Dimension pageSize)
+    public CSSBoxTreeBuilder(Dimension pageSize, boolean useVisualBounds)
     {
         this.pageSize = pageSize;
+        this.useVisualBounds = useVisualBounds;
     }
     
     public void parse(URL url) throws IOException, SAXException
@@ -189,7 +193,7 @@ public class CSSBoxTreeBuilder
         log.trace("A2.5");
         root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
         log.trace("A3");
-        root = createBoxTree(rootbox, boxlist, false); //create the nesting tree based on the visual bounds
+        root = createBoxTree(rootbox, boxlist, !useVisualBounds); //create the nesting tree based on the visual bounds or content bounds depending on the settings
         root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
         root.recomputeBounds(); //compute the real bounds of each node
         log.trace("A4");
