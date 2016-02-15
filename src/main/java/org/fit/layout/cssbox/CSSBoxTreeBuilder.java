@@ -167,7 +167,8 @@ public class CSSBoxTreeBuilder
             NodeList titles = head.getElementsByTagName("title");
             if (titles.getLength() > 0)
             {
-                return titles.item(0).getTextContent();
+                final String ret = titles.item(0).getTextContent();
+                return (ret == null) ? null : ret.trim();
             }
         }
         return "";
