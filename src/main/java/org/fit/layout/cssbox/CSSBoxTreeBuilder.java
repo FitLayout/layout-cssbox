@@ -7,11 +7,16 @@ package org.fit.layout.cssbox;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -26,7 +31,10 @@ import org.fit.cssbox.layout.BrowserCanvas;
 import org.fit.cssbox.layout.ElementBox;
 import org.fit.cssbox.layout.Viewport;
 import org.fit.cssbox.pdf.PdfBrowserCanvas;
+import org.fit.layout.impl.DefaultBox;
+import org.fit.layout.model.Box.DisplayType;
 import org.fit.layout.model.Page;
+import org.fit.layout.model.Rectangular;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -84,6 +92,45 @@ public class CSSBoxTreeBuilder
         pg.setHeight(rootbox.getHeight());
     }
     
+    public void parseList(List<URL> list) throws IOException, SAXException
+    {
+        int twidth = 0;
+        int theight = 0;
+
+        DefaultBox main = new DefaultBox();
+        
+        for (URL url : list)
+        {
+            log.info("Parsing: {}", url);
+            //render the page
+            BrowserCanvas canvas = renderUrl(url, pageSize);
+            ElementBox rootbox = canvas.getViewport();
+            BoxNode root = buildTree(rootbox);
+            
+            //wrap the page with a new block box
+            DefaultBox pageBox = new DefaultBox();
+            pageBox.add(root);
+            pageBox.setDisplayType(DisplayType.BLOCK);
+            pageBox.setBounds(new Rectangular(root.getBounds()));
+            pageBox.getBounds().setX1(0);
+            pageBox.getBounds().setY1(theight);
+            pageBox.setVisualBounds(new Rectangular(pageBox.getBounds()));
+            
+            //add to the root
+            main.add(pageBox);
+            twidth = Math.max(twidth, pageBox.getWidth());
+            theight = theight + pageBox.getHeight();
+        }
+        main.setBounds(new Rectangular(0, 0, twidth, theight));
+        main.setVisualBounds(new Rectangular(0, 0, twidth, theight));
+        
+        //initialize the page
+        page = new PageImpl(list.get(0));
+        page.setRoot(main);
+        page.setWidth(twidth);
+        page.setHeight(theight);
+    }
+    
     public void parse(String urlstring) throws MalformedURLException, IOException, SAXException
     {
         urlstring = urlstring.trim();
@@ -96,7 +143,8 @@ public class CSSBoxTreeBuilder
         }
         else if (urlstring.startsWith("list:"))
         {
-            
+            List<URL> list = loadList(urlstring.substring(5));
+            parseList(list);
         }
         else
             throw new MalformedURLException("Unsupported protocol in " + urlstring);
@@ -316,4 +364,32 @@ public class CSSBoxTreeBuilder
         for (int i = 0; i < root.getChildCount(); i++)
             computeBackgrounds(root.getChildBox(i), newbg);
     }
+    
+    //===================================================================
+    
+    private List<URL> loadList(String filename)
+    {
+        List<URL> ret = new ArrayList<URL>();
+        try
+        {
+            BufferedReader read = new BufferedReader(new FileReader(filename));
+            String line;
+            while ((line = read.readLine()) != null)
+            {
+                line = line.trim();
+                if (!line.isEmpty() && !line.startsWith("#"))
+                {
+                    ret.add(new URL(line));
+                }
+            }
+            read.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return ret;
+    }
+    
 }
