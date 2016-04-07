@@ -86,7 +86,20 @@ public class CSSBoxTreeBuilder
     
     public void parse(String urlstring) throws MalformedURLException, IOException, SAXException
     {
-        parse(new URL(urlstring));
+        urlstring = urlstring.trim();
+        if (urlstring.startsWith("http:") ||
+            urlstring.startsWith("https:") ||
+            urlstring.startsWith("ftp:") ||
+            urlstring.startsWith("file:"))
+        {
+            parse(new URL(urlstring));
+        }
+        else if (urlstring.startsWith("list:"))
+        {
+            
+        }
+        else
+            throw new MalformedURLException("Unsupported protocol in " + urlstring);
     }
     
     public Page getPage()

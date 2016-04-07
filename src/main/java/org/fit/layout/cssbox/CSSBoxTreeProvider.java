@@ -7,7 +7,6 @@ package org.fit.layout.cssbox;
 
 import java.awt.Dimension;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.fit.layout.impl.BaseBoxTreeProvider;
@@ -21,7 +20,7 @@ import org.xml.sax.SAXException;
  */
 public class CSSBoxTreeProvider extends BaseBoxTreeProvider
 {
-    private URL url;
+    private String urlstring;
     private int width;
     private int height;
     private boolean useVisualBounds;
@@ -31,7 +30,7 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
 
     public CSSBoxTreeProvider()
     {
-        url = null;
+        urlstring = null;
         width = 1200;
         height = 800;
         useVisualBounds = true;
@@ -39,7 +38,7 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
     
     public CSSBoxTreeProvider(URL url, int width, int height, boolean useVisualBounds)
     {
-        this.url = url;
+        this.urlstring = url.toString();
         this.width = width;
         this.height = height;
         this.useVisualBounds = useVisualBounds;
@@ -75,23 +74,14 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
         return paramTypes;
     }
 
-    public URL getUrl()
+    public String getUrl()
     {
-        return url;
+        return urlstring;
     }
 
-    public void setUrl(URL url)
-    {
-        this.url = url;
-    }
-    
     public void setUrl(String url)
     {
-        try {
-            this.url = new URL(url);
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Malformed URL: " + url);
-        }
+        urlstring = new String(url);
     }
 
     public int getWidth()
@@ -149,7 +139,7 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
     {
         CSSBoxTreeBuilder build = new CSSBoxTreeBuilder(new Dimension(width, height), useVisualBounds);
         try {
-            build.parse(url);
+            build.parse(urlstring);
             return build.getPage();
         } catch (IOException | SAXException e) {
             e.printStackTrace();
