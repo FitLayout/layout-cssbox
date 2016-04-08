@@ -112,9 +112,12 @@ public class CSSBoxTreeBuilder
             pageBox.add(root);
             pageBox.setDisplayType(DisplayType.BLOCK);
             pageBox.setBounds(new Rectangular(root.getBounds()));
-            pageBox.getBounds().setX1(0);
-            pageBox.getBounds().setY1(theight);
-            pageBox.setVisualBounds(new Rectangular(pageBox.getBounds()));
+            pageBox.setVisualBounds(new Rectangular(root.getBounds()));
+            pageBox.setContentBounds(new Rectangular(root.getBounds()));
+            pageBox.move(0, theight);
+            pageBox.setBackgroundSeparated(true);
+            
+            log.info("Rendered: {}x{}", pageBox.getWidth(), pageBox.getHeight());
             
             //add to the root
             main.add(pageBox);
