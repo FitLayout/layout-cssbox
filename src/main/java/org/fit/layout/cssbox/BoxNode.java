@@ -1058,6 +1058,18 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
     }
 
     @Override
+    public void move(int xofs, int yofs)
+    {
+        getBounds().move(xofs, yofs);
+        getContentBounds().move(xofs, yofs);
+        getVisualBounds().move(xofs, yofs);
+        for (GenericTreeNode child : getChildren())
+        {
+            ((BoxNode) child).move(xofs, yofs);
+        }
+    }
+    
+    @Override
     public Color getColor()
     {
         return getBox().getVisualContext().getColor();
