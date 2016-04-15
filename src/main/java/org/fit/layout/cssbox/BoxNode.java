@@ -694,9 +694,9 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
      * @return the parent box of this box in the tree
      */
     @Override
-    public BoxNode getParentBox()
+    public org.fit.layout.model.Box getParentBox()
     {
-        return (BoxNode) getParent();
+        return (org.fit.layout.model.Box) getParent();
     }
 
     /**
@@ -1196,6 +1196,8 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
         if (box instanceof ElementBox)
         {
             CSSProperty.Display display = ((ElementBox) box).getDisplay();
+            if (display == null)
+                return DisplayType.BLOCK; //e.g. the viewport has no display value
             switch (display)
             {
                 case BLOCK:
@@ -1231,7 +1233,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
                 case TABLE_ROW_GROUP:
                     return DisplayType.TABLE_ROW_GROUP;
                 default:
-                    return null;
+                    return DisplayType.BLOCK; //this should not happen
             }
         }
         else
