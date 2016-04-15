@@ -98,6 +98,7 @@ public class CSSBoxTreeBuilder
         int theight = 0;
 
         DefaultBox main = new DefaultBox();
+        main.setTagName("pageset");
         
         for (URL url : list)
         {
@@ -110,6 +111,7 @@ public class CSSBoxTreeBuilder
             //wrap the page with a new block box
             DefaultBox pageBox = new DefaultBox();
             pageBox.add(root);
+            pageBox.setTagName("page");
             pageBox.setDisplayType(DisplayType.BLOCK);
             pageBox.setBounds(new Rectangular(root.getBounds()));
             pageBox.setVisualBounds(new Rectangular(root.getBounds()));
