@@ -97,7 +97,9 @@ public class CSSBoxTreeBuilder
         int twidth = 0;
         int theight = 0;
 
+        page = new PageImpl(list.get(0));
         DefaultBox main = new DefaultBox();
+        main.setPage(page);
         main.setTagName("pageset");
         
         for (URL url : list)
@@ -110,6 +112,7 @@ public class CSSBoxTreeBuilder
             
             //wrap the page with a new block box
             DefaultBox pageBox = new DefaultBox();
+            pageBox.setPage(page);
             pageBox.add(root);
             pageBox.setTagName("page");
             pageBox.setDisplayType(DisplayType.BLOCK);
@@ -130,7 +133,6 @@ public class CSSBoxTreeBuilder
         main.setVisualBounds(new Rectangular(0, 0, twidth, theight));
         
         //initialize the page
-        page = new PageImpl(list.get(0));
         page.setRoot(main);
         page.setWidth(twidth);
         page.setHeight(theight);
