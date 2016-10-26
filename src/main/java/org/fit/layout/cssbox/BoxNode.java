@@ -279,11 +279,11 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
 	                	ret.expandToEnclose(sb);
                 }
             }
-            //if nothing has been found return the top left corner
+            //if nothing has been found return an empty rectangle at the top left corner
             if (ret == null)
             {
                 Rectangle b = box.getAbsoluteBounds().intersection(box.getClipBlock().getClippedContentBounds());
-            	return new Rectangular(b.x, b.y, b.x, b.y);
+            	return new Rectangular(b.x, b.y);
             }
             else
             	return ret;
@@ -659,13 +659,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
     @Override
     public boolean isVisible()
     {
-        Box box = getBox();
-        if (box == null)
-            return false;
-        else if (box instanceof TextBox)
-            return box.isVisible() && containsVisibleTextString() && !getEfficientBackground().equals(getEfficientColor());
-        else
-            return box.isVisible();
+        return !getVisualBounds().isEmpty();
     }
     
     /**
