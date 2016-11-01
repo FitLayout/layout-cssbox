@@ -7,7 +7,9 @@ package org.fit.layout.cssbox;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import org.fit.cssbox.layout.BlockReplacedBox;
@@ -28,6 +30,7 @@ import org.fit.layout.model.ContentObject;
 import org.fit.layout.model.Page;
 import org.fit.layout.model.Rectangular;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import cz.vutbr.web.css.CSSProperty;
@@ -1135,6 +1138,43 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
         }
         else
             return null;
+    }
+
+    @Override
+    public Map<String, String> getAttributes()
+    {
+        final Node node = getDOMNode();
+        NamedNodeMap map = null;
+        if (node.getNodeType() == Node.ELEMENT_NODE)
+        {
+            map = node.getAttributes();
+        }
+        else if (node.getNodeType() == Node.TEXT_NODE) //text nodes -- try parent //TODO how to propagate from ancestors correctly?
+        {
+            final Node pnode = node.getParentNode();
+            if (pnode != null && pnode.getNodeType() == Node.ELEMENT_NODE)
+            {
+                map = pnode.getAttributes();
+            }
+        }
+        
+        Map<String, String> ret = new HashMap<>((map == null) ? 1 : (map.getLength() + 1));
+        if (map != null) //store the attributes found
+        {
+            for (int i = 0; i < map.getLength(); i++)
+            {
+                final Node attr = map.item(i);
+                ret.put(attr.getNodeName(), attr.getNodeValue());
+            }
+        }
+        //eventually add the href value (which may be inherited from top)
+        if (!ret.containsKey("href"))
+        {
+            String href = getAncestorAttribute(node, "a", "href");
+            if (href != null)
+                ret.put("href", href);
+        }
+        return ret;
     }
 
     protected String getElementAttribute(Node node, String attrName)
