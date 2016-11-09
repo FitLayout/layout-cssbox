@@ -262,7 +262,7 @@ public class CSSBoxTreeBuilder
         log.trace("A2.5");
         root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
         log.trace("A3");
-        root = createBoxTree(rootbox, boxlist, !useVisualBounds); //create the nesting tree based on the visual bounds or content bounds depending on the settings
+        root = createBoxTree(rootbox, boxlist, useVisualBounds); //create the nesting tree based on the visual bounds or content bounds depending on the settings
         root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
         root.recomputeBounds(); //compute the real bounds of each node
         log.trace("A4");
@@ -302,10 +302,10 @@ public class CSSBoxTreeBuilder
      * This tree is only used for determining the backgrounds.
      * 
      * @param boxlist the list of boxes to build the tree from
-     * @param full when set to true, the tree is build according to the content bounds
-     * of each box. Otherwise, only the visual bounds are used.
+     * @param useVisualBounds when set to {@code true} the visual bounds are used for constructing the tree. Otherwise, the original
+     * box hierarchy is used.
      */
-    private BoxNode createBoxTree(ElementBox rootbox, Vector<BoxNode> boxlist, boolean full)
+    private BoxNode createBoxTree(ElementBox rootbox, Vector<BoxNode> boxlist, boolean useVisualBounds)
     {
         //a working copy of the box list
         Vector<BoxNode> list = new Vector<BoxNode>(boxlist);
@@ -318,7 +318,7 @@ public class CSSBoxTreeBuilder
             node.removeFromTree();
         
         //when working with visual bounds, remove the boxes that are not visually separated
-        if (!full)
+        if (useVisualBounds)
         {
             for (Iterator<BoxNode> it = list.iterator(); it.hasNext(); )
             {
@@ -330,7 +330,12 @@ public class CSSBoxTreeBuilder
         
         //let each node choose it's children - find the roots and parents
         for (BoxNode node : list)
-            node.markNodesInside(list, full);
+        {
+            if (useVisualBounds)
+                node.markNodesInside(list, false);
+            else
+                node.markChildNodes(list);
+        }
         
         //choose the roots
         for (Iterator<BoxNode> it = list.iterator(); it.hasNext();)

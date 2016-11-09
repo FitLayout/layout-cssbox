@@ -886,7 +886,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
     
     /**
      * Takes a list of nodes and selects the nodes that are located directly inside 
-     * of this node's box. The nearestParent of the selected boxes is set to this box.
+     * of this node's box. The {@code nearestParent} of the selected boxes is set to this box.
      * @param list the list of nodes to test
      * @param full when set to true, all the nodes within the box content bounds are considered.
      *          Otherwise, only the boxes within the visual bounds are considered.
@@ -915,6 +915,22 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
                 }
             }
         }
+    }
+    
+    /**
+     * Takes a list of nodes and selects the nodes whose parent box is identical to this node's box. 
+     * The {@code nearestParent} of the selected boxes is set to this box node.
+     * @param list the list of nodes to test
+     */
+    public void markChildNodes(Vector<BoxNode> list)
+    {
+        final Box thisBox = this.getBox(); 
+        for (Iterator<BoxNode> it = list.iterator(); it.hasNext();)
+        {
+            BoxNode node = it.next();
+            if (node != this && node.getBox().getParent() == thisBox)
+                node.nearestParent = this;
+        }        
     }
     
     /**
