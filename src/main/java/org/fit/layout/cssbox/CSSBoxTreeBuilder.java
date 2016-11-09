@@ -65,14 +65,18 @@ public class CSSBoxTreeBuilder
     /** Use real visual bounds instead of the element content bounds for building the box hierarchy */
     protected boolean useVisualBounds;
     
+    /** Replace the images with their {@code alt} text */
+    protected boolean replaceImagesWithAlt;
+    
     /** a counter for assigning the box order */
     private int order_counter;
     
    
-    public CSSBoxTreeBuilder(Dimension pageSize, boolean useVisualBounds)
+    public CSSBoxTreeBuilder(Dimension pageSize, boolean useVisualBounds, boolean replaceImagesWithAlt)
     {
         this.pageSize = pageSize;
         this.useVisualBounds = useVisualBounds;
+        this.replaceImagesWithAlt = replaceImagesWithAlt;
     }
     
     public void parse(URL url) throws IOException, SAXException
@@ -209,7 +213,7 @@ public class CSSBoxTreeBuilder
             BrowserCanvas contentCanvas = new BrowserCanvas(da.getRoot(), da, src.getURL());
             contentCanvas.getConfig().setLoadImages(false);
             contentCanvas.getConfig().setLoadBackgroundImages(false);
-            contentCanvas.getConfig().setReplaceImagesWithAlt(true);
+            contentCanvas.getConfig().setReplaceImagesWithAlt(replaceImagesWithAlt);
             contentCanvas.createLayout(pageSize);
             
             src.close();

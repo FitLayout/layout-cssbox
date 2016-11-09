@@ -24,6 +24,7 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
     private int width;
     private int height;
     private boolean useVisualBounds;
+    private boolean replaceImagesWithAlt; //not published as a parameter now
     
     private final String[] paramNames = { "url", "width", "height", "useVisualBounds" };
     private final ValueType[] paramTypes = { ValueType.STRING, ValueType.INTEGER, ValueType.INTEGER, ValueType.BOOLEAN };
@@ -114,6 +115,16 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
         this.useVisualBounds = useVisualBounds;
     }
 
+    public boolean isReplaceImagesWithAlt()
+    {
+        return replaceImagesWithAlt;
+    }
+
+    public void setReplaceImagesWithAlt(boolean replaceImagesWithAlt)
+    {
+        this.replaceImagesWithAlt = replaceImagesWithAlt;
+    }
+
     @Override
     public Object[] getParamRange(String name)
     {
@@ -137,7 +148,7 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
     @Override
     public Page getPage()
     {
-        CSSBoxTreeBuilder build = new CSSBoxTreeBuilder(new Dimension(width, height), useVisualBounds);
+        CSSBoxTreeBuilder build = new CSSBoxTreeBuilder(new Dimension(width, height), useVisualBounds, replaceImagesWithAlt);
         try {
             build.parse(urlstring);
             return build.getPage();
