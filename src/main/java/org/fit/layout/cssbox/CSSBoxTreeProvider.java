@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.net.URL;
 
+import org.fit.cssbox.layout.Viewport;
 import org.fit.layout.impl.BaseBoxTreeProvider;
 import org.fit.layout.model.Page;
 import org.xml.sax.SAXException;
@@ -29,6 +30,8 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
     private final String[] paramNames = { "url", "width", "height", "useVisualBounds" };
     private final ValueType[] paramTypes = { ValueType.STRING, ValueType.INTEGER, ValueType.INTEGER, ValueType.BOOLEAN };
 
+    private CSSBoxTreeBuilder builder;
+    
     public CSSBoxTreeProvider()
     {
         urlstring = null;
@@ -148,14 +151,22 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
     @Override
     public Page getPage()
     {
-        CSSBoxTreeBuilder build = new CSSBoxTreeBuilder(new Dimension(width, height), useVisualBounds, replaceImagesWithAlt);
+        builder = new CSSBoxTreeBuilder(new Dimension(width, height), useVisualBounds, replaceImagesWithAlt);
         try {
-            build.parse(urlstring);
-            return build.getPage();
+            builder.parse(urlstring);
+            return builder.getPage();
         } catch (IOException | SAXException e) {
             e.printStackTrace();
             return null;
         }
+    }
+    
+    public Viewport getViewport()
+    {
+        if (builder != null)
+            return builder.getViewport();
+        else
+            return null;
     }
 
 }

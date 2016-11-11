@@ -59,6 +59,9 @@ public class CSSBoxTreeBuilder
     /** The resulting page */
     protected PageImpl page;
     
+    /** CSSBox viewport that represents the rendered page box tree */
+    protected Viewport viewport;
+    
     /** Requested page dimensions */
     protected Dimension pageSize;
     
@@ -83,6 +86,7 @@ public class CSSBoxTreeBuilder
     {
         //render the page
         BrowserCanvas canvas = renderUrl(url, pageSize);
+        viewport = canvas.getViewport();
         PageImpl pg = page = new PageImpl(pageUrl);
         pg.setTitle(pageTitle);
         
@@ -161,9 +165,22 @@ public class CSSBoxTreeBuilder
             throw new MalformedURLException("Unsupported protocol in " + urlstring);
     }
     
+    /**
+     * The resulting page model.
+     * @return the page
+     */
     public Page getPage()
     {
         return page;
+    }
+    
+    /**
+     * Obtains the CSSBox viewport of the rendered page. 
+     * @return the viewport or {@code null} when no page was rendered or multiple pages were rendered.
+     */
+    public Viewport getViewport()
+    {
+        return viewport;
     }
     
     //===================================================================
