@@ -68,6 +68,8 @@ public class CSSBoxTreeBuilder
     /** Use real visual bounds instead of the element content bounds for building the box hierarchy */
     protected boolean useVisualBounds;
     
+    protected boolean preserveAux;
+    
     /** Replace the images with their {@code alt} text */
     protected boolean replaceImagesWithAlt;
     
@@ -75,10 +77,11 @@ public class CSSBoxTreeBuilder
     private int order_counter;
     
    
-    public CSSBoxTreeBuilder(Dimension pageSize, boolean useVisualBounds, boolean replaceImagesWithAlt)
+    public CSSBoxTreeBuilder(Dimension pageSize, boolean useVisualBounds, boolean preserveAux, boolean replaceImagesWithAlt)
     {
         this.pageSize = pageSize;
         this.useVisualBounds = useVisualBounds;
+        this.preserveAux = preserveAux;
         this.replaceImagesWithAlt = replaceImagesWithAlt;
     }
     
@@ -275,7 +278,7 @@ public class CSSBoxTreeBuilder
         
         //create the tree
         log.trace("A1");
-        BoxNode root = createBoxTree(rootbox, boxlist, true); //create a nesting tree based on the content bounds
+        BoxNode root = createBoxTree(rootbox, boxlist, true, true, true); //create a nesting tree based on the content bounds
         log.trace("A2");
         Color bg = rootbox.getBgcolor();
         if (bg == null) bg = Color.WHITE;
@@ -283,7 +286,7 @@ public class CSSBoxTreeBuilder
         log.trace("A2.5");
         root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
         log.trace("A3");
-        root = createBoxTree(rootbox, boxlist, useVisualBounds); //create the nesting tree based on the visual bounds or content bounds depending on the settings
+        root = createBoxTree(rootbox, boxlist, true, useVisualBounds, preserveAux); //create the nesting tree based on the visual bounds or content bounds depending on the settings
         root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
         root.recomputeBounds(); //compute the real bounds of each node
         log.trace("A4");
@@ -323,10 +326,14 @@ public class CSSBoxTreeBuilder
      * This tree is only used for determining the backgrounds.
      * 
      * @param boxlist the list of boxes to build the tree from
-     * @param useVisualBounds when set to {@code true} the visual bounds are used for constructing the tree. Otherwise, the original
-     * box hierarchy is used.
+     * @param useBounds when set to {@code true}, the full or visual bounds are used for constructing the tree
+     * depending on the {@code useVisualBounds} parameter. Otherwise, the original box hierarchy is used.
+     * @param useVisualBounds when set to {@code true} the visual bounds are used for constructing the tree. Otherwise,
+     * the content bounds are used. 
+     * @param preserveAux when set to {@code true}, all boxes are preserved. Otherwise, only the visually
+     * distinguished ones are preserved.
      */
-    private BoxNode createBoxTree(ElementBox rootbox, Vector<BoxNode> boxlist, boolean useVisualBounds)
+    private BoxNode createBoxTree(ElementBox rootbox, Vector<BoxNode> boxlist, boolean useBounds, boolean useVisualBounds, boolean preserveAux)
     {
         //a working copy of the box list
         Vector<BoxNode> list = new Vector<BoxNode>(boxlist);
@@ -339,7 +346,7 @@ public class CSSBoxTreeBuilder
             node.removeFromTree();
         
         //when working with visual bounds, remove the boxes that are not visually separated
-        if (useVisualBounds)
+        if (!preserveAux)
         {
             for (Iterator<BoxNode> it = list.iterator(); it.hasNext(); )
             {
@@ -352,8 +359,8 @@ public class CSSBoxTreeBuilder
         //let each node choose it's children - find the roots and parents
         for (BoxNode node : list)
         {
-            if (useVisualBounds)
-                node.markNodesInside(list, false);
+            if (useBounds)
+                node.markNodesInside(list, useVisualBounds);
             else
                 node.markChildNodes(list);
         }

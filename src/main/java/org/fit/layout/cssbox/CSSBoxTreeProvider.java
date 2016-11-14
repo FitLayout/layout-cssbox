@@ -25,10 +25,11 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
     private int width;
     private int height;
     private boolean useVisualBounds;
+    private boolean preserveAux;
     private boolean replaceImagesWithAlt; //not published as a parameter now
     
-    private final String[] paramNames = { "url", "width", "height", "useVisualBounds" };
-    private final ValueType[] paramTypes = { ValueType.STRING, ValueType.INTEGER, ValueType.INTEGER, ValueType.BOOLEAN };
+    private final String[] paramNames = { "url", "width", "height", "useVisualBounds", "preserveAux" };
+    private final ValueType[] paramTypes = { ValueType.STRING, ValueType.INTEGER, ValueType.INTEGER, ValueType.BOOLEAN, ValueType.BOOLEAN };
 
     private CSSBoxTreeBuilder builder;
     
@@ -38,14 +39,16 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
         width = 1200;
         height = 800;
         useVisualBounds = true;
+        preserveAux = false;
     }
     
-    public CSSBoxTreeProvider(URL url, int width, int height, boolean useVisualBounds)
+    public CSSBoxTreeProvider(URL url, int width, int height, boolean useVisualBounds, boolean preserveAux)
     {
         this.urlstring = url.toString();
         this.width = width;
         this.height = height;
         this.useVisualBounds = useVisualBounds;
+        this.preserveAux = preserveAux;
     }
 
     @Override
@@ -118,7 +121,17 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
         this.useVisualBounds = useVisualBounds;
     }
 
-    public boolean isReplaceImagesWithAlt()
+    public boolean getPreserveAux()
+    {
+        return preserveAux;
+    }
+
+    public void setPreserveAux(boolean preserveAux)
+    {
+        this.preserveAux = preserveAux;
+    }
+
+    public boolean getReplaceImagesWithAlt()
     {
         return replaceImagesWithAlt;
     }
@@ -151,7 +164,7 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
     @Override
     public Page getPage()
     {
-        builder = new CSSBoxTreeBuilder(new Dimension(width, height), useVisualBounds, replaceImagesWithAlt);
+        builder = new CSSBoxTreeBuilder(new Dimension(width, height), useVisualBounds, preserveAux, replaceImagesWithAlt);
         try {
             builder.parse(urlstring);
             return builder.getPage();
