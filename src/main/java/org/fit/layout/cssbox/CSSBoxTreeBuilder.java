@@ -277,20 +277,35 @@ public class CSSBoxTreeBuilder
         createBoxList(rootbox, boxlist);
         
         //create the tree
-        log.trace("A1");
-        BoxNode root = createBoxTree(rootbox, boxlist, true, true, true); //create a nesting tree based on the content bounds
-        log.trace("A2");
-        Color bg = rootbox.getBgcolor();
-        if (bg == null) bg = Color.WHITE;
-        computeBackgrounds(root, bg); //compute the efficient background colors
-        log.trace("A2.5");
-        root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
-        log.trace("A3");
-        root = createBoxTree(rootbox, boxlist, true, useVisualBounds, preserveAux); //create the nesting tree based on the visual bounds or content bounds depending on the settings
-        root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
-        root.recomputeBounds(); //compute the real bounds of each node
-        log.trace("A4");
-        return root;
+        if (useVisualBounds)
+        {
+            //two-phase algorithm considering the visual bounds
+            log.trace("A1");
+            BoxNode root = createBoxTree(rootbox, boxlist, true, true, true); //create a nesting tree based on the content bounds
+            log.trace("A2");
+            Color bg = rootbox.getBgcolor();
+            if (bg == null) bg = Color.WHITE;
+            computeBackgrounds(root, bg); //compute the efficient background colors
+            log.trace("A2.5");
+            root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
+            log.trace("A3");
+            root = createBoxTree(rootbox, boxlist, true, true, preserveAux); //create the nesting tree based on the visual bounds or content bounds depending on the settings
+            root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
+            root.recomputeBounds(); //compute the real bounds of each node
+            log.trace("A4");
+            return root;
+        }
+        else
+        {
+            //simplified algorihm - use the original box nesting
+            BoxNode root = createBoxTree(rootbox, boxlist, false, true, true);
+            Color bg = rootbox.getBgcolor();
+            if (bg == null) bg = Color.WHITE;
+            computeBackgrounds(root, bg); //compute the efficient background colors
+            root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
+            root.recomputeBounds(); //compute the real bounds of each node
+            return root;
+        }
     }
     
     /**
@@ -304,9 +319,7 @@ public class CSSBoxTreeBuilder
     {
         if (root.isDisplayed())
         {
-            if (!(root instanceof Viewport)
-                && root.isVisible()
-                && root.getWidth() > 0 && root.getHeight() > 0)
+            if (!(root instanceof Viewport) && root.isVisible())
             {
                 BoxNode newnode = new BoxNode(root, page);
                 newnode.setOrder(order_counter++);
