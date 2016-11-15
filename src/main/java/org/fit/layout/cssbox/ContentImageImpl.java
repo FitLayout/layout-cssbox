@@ -5,6 +5,8 @@
  */
 package org.fit.layout.cssbox;
 
+import java.net.URL;
+
 import org.fit.cssbox.layout.ReplacedImage;
 import org.fit.layout.model.ContentImage;
 
@@ -30,6 +32,15 @@ public class ContentImageImpl implements ContentImage
     public void setImage(ReplacedImage image)
     {
         this.image = image;
+    }
+
+    @Override
+    public URL getUrl()
+    {
+        if (image != null)
+            return image.getUrl();
+        else
+            return null;
     }
 
 }
