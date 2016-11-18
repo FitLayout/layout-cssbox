@@ -273,7 +273,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
             {
                 BoxNode subnode = getChildBox(i); 
                 Box sub = subnode.getBox();
-                Rectangular sb = subnode.getMinimalVisualBounds();
+                Rectangular sb = subnode.getVisualBounds();
                 if (sub.isDisplayed() && subnode.isVisible() && sb.getWidth() > 0 && sb.getHeight() > 0)
                 {
 	                if (ret == null)
@@ -328,22 +328,31 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
             	else if (hasLeftBorder())
             		ret = new Rectangular(b.getX1(), b.getY1(), b.getX1() + elem.getBorder().left - 1, b.getY2());
             	else if (hasRightBorder())
-            		return new Rectangular(b.getX2() - elem.getBorder().right + 1, b.getY1(), b.getX2(), b.getY2());
+            		ret = new Rectangular(b.getX2() - elem.getBorder().right + 1, b.getY1(), b.getX2(), b.getY2());
             }
             //at least two borders or a border and background - take the border bounds
             else if (getBorderCount() >= 2 || (getBorderCount() == 1 && isBackgroundSeparated()))
             {
                 ret = new Rectangular(elem.getAbsoluteBorderBounds().intersection(elem.getClipBlock().getClippedContentBounds()));
             }
-            //no border but the background is different from the parent
-            else if (isBackgroundSeparated())
+            
+            //consider the background if different from the parent
+            if (isBackgroundSeparated())
             {
-                ret = new Rectangular(elem.getAbsoluteBackgroundBounds().intersection(elem.getClipBlock().getClippedContentBounds()));
+                Rectangular bg = new Rectangular(elem.getAbsoluteBackgroundBounds().intersection(elem.getClipBlock().getClippedContentBounds()));
+                if (ret == null)
+                    ret = bg;
+                else
+                    ret.expandToEnclose(bg);
             }
             //no visual separators, consider the contents
             else
             {
-                ret = getMinimalVisualBounds();
+                Rectangular cont  = getMinimalVisualBounds();
+                if (ret == null)
+                    ret = cont;
+                else
+                    ret.expandToEnclose(cont);
             }
         }
         else //not an element
