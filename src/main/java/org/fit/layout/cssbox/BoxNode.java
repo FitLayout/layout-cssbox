@@ -7,8 +7,10 @@ package org.fit.layout.cssbox;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -67,6 +69,9 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
      * to the box creation order and not to the drawing order. */
     protected int order;
     
+    /** The transformation that should be applied to the box */
+    protected BoxTransform transform;
+    
     /** The total bounds of the box node. Normally, the bounds are the same
      * as the content bounds. However, the BoxNode may be extended
      * in order to enclose all the overlapping boxes */
@@ -101,6 +106,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
         //copy the bounds from the box
         if (box != null)
         {
+            transform = new BoxTransform(box);
 	        content = computeContentBounds();
 	        bounds = new Rectangular(content); //later, this will be recomputed using recomputeBounds()
         }
@@ -684,6 +690,53 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
             return ((ElementBox) getBox()).getBgcolor();
         else
             return null;
+    }
+    
+    public void applyTransform(BoxTransform trans)
+    {
+        if (!trans.isEmpty())
+        {
+            System.out.println("Old: " + bounds);
+            bounds = trans.transformRect(bounds);
+            System.out.println("New: " + bounds);
+            if (content != null)
+                content = trans.transformRect(content);
+            if (visual != null)
+                visual = trans.transformRect(visual);
+        }
+    }
+    
+    public void applyTransformRecursively(BoxTransform trans)
+    {
+        for (int i = 0; i < getChildCount(); i++)
+            getChildBox(i).applyTransformRecursively(trans);
+    }
+    
+    public void applyTransforms()
+    {
+        //apply our transform recursively
+        if (!transform.isEmpty())
+        {
+            applyTransform(transform);
+            applyTransformRecursively(transform);
+        }
+        //apply their transforms to the children, remove the invisible ones
+        //TODO this is a temporaty hack, it should be solved better
+        List<BoxNode> toRemove = new ArrayList<>();
+        for (int i = 0; i < getChildCount(); i++)
+        {
+            BoxNode child = getChildBox(i); 
+            child.applyTransforms();
+            if (!this.getVisualBounds().intersects(child.getVisualBounds()))
+                toRemove.add(child);
+        }
+        if (!toRemove.isEmpty())
+        {
+            for (BoxNode child : toRemove)
+                remove(child);
+            recomputeVisualBounds();
+            visual = transform.transformRect(visual);
+        }
     }
     
     //===================================================================================

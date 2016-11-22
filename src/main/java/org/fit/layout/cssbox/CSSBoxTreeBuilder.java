@@ -293,6 +293,7 @@ public class CSSBoxTreeBuilder
             root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
             root.recomputeBounds(); //compute the real bounds of each node
             log.trace("A4");
+            //root.applyTransforms(); //TODO test this first; actually the transform should be applied according to the drawing tree, not this tree
             return root;
         }
         else
@@ -304,6 +305,7 @@ public class CSSBoxTreeBuilder
             computeBackgrounds(root, bg); //compute the efficient background colors
             root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
             root.recomputeBounds(); //compute the real bounds of each node
+            root.applyTransforms();
             return root;
         }
     }
