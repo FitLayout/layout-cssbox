@@ -321,7 +321,7 @@ public class CSSBoxTreeBuilder
     {
         if (root.isDisplayed())
         {
-            if (!(root instanceof Viewport) && root.isVisible())
+            if (!(root instanceof Viewport) && root.isDeclaredVisible())
             {
                 BoxNode newnode = new BoxNode(root, page);
                 newnode.setOrder(order_counter++);
