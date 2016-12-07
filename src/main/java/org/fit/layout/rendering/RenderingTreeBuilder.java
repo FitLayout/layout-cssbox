@@ -340,7 +340,7 @@ public class RenderingTreeBuilder
         for (RenderedBox node : list)
         {
             if (useBounds)
-                node.markNodesInside(list, useVisualBounds);
+                node.markNodesInside(list, !useVisualBounds);
             else
                 node.markChildNodes(list);
         }

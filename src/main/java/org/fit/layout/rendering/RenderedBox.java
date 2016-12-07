@@ -97,6 +97,18 @@ public abstract class RenderedBox extends DefaultBox
         getBounds().expandToEnclose(child.getBounds());
     }
     
+    @Override
+    public Rectangular getVisualBounds()
+    {
+        Rectangular ret = super.getVisualBounds();
+        if (ret == null)
+        {
+            ret = computeVisualBounds();
+            setVisualBounds(ret);
+        }
+        return ret;
+    }
+
     /** 
      * Checks if another node is located inside the visual bounds of this box.
      * @param childNode the node to check
@@ -119,6 +131,8 @@ public abstract class RenderedBox extends DefaultBox
             System.out.println(childNode + " inside of " + this);*/
         /*if (this.getOrder() == 70 && childNode.getOrder() == 74)
             System.out.println("jo!");*/
+        if (this.getId() == 73 && childNode.getId() == 74)
+            System.out.println("jo!");
         
         
         //check how many corners of the child are inside enough (with some overlap)
