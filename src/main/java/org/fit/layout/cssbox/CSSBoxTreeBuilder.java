@@ -205,6 +205,7 @@ public class CSSBoxTreeBuilder
         {
             PDDocument doc = loadPdf(is);
             BrowserCanvas canvas = new PdfBrowserCanvas(doc, null, pageSize, src.getURL());
+            doc.close();
             pageTitle = "";
             return canvas;
         }
