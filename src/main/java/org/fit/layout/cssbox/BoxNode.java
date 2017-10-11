@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.fit.cssbox.css.CSSUnits;
 import org.fit.cssbox.layout.BlockReplacedBox;
 import org.fit.cssbox.layout.Box;
 import org.fit.cssbox.layout.ElementBox;
@@ -571,7 +572,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
             
             Color clr = null;
             if (tclr != null)
-                clr = tclr.getValue();
+                clr = CSSUnits.convertColor(tclr.getValue());
             if (clr == null)
             {
                 clr = box.getVisualContext().getColor();
