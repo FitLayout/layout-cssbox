@@ -8,9 +8,15 @@ package org.fit.layout.cssbox;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.fit.cssbox.layout.Viewport;
+import org.fit.layout.api.Parameter;
 import org.fit.layout.impl.BaseBoxTreeProvider;
+import org.fit.layout.impl.ParameterBoolean;
+import org.fit.layout.impl.ParameterInt;
+import org.fit.layout.impl.ParameterString;
 import org.fit.layout.model.Page;
 import org.xml.sax.SAXException;
 
@@ -28,9 +34,6 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
     private boolean preserveAux;
     private boolean replaceImagesWithAlt; //not published as a parameter now
     
-    private final String[] paramNames = { "url", "width", "height", "useVisualBounds", "preserveAux" };
-    private final ValueType[] paramTypes = { ValueType.STRING, ValueType.INTEGER, ValueType.INTEGER, ValueType.BOOLEAN, ValueType.BOOLEAN };
-
     private CSSBoxTreeBuilder builder;
     
     public CSSBoxTreeProvider()
@@ -70,17 +73,17 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
     }
 
     @Override
-    public String[] getParamNames()
+    public List<Parameter> defineParams()
     {
-        return paramNames;
+        List<Parameter> ret = new ArrayList<>(5);
+        ret.add(new ParameterString("url", 0, 64));
+        ret.add(new ParameterInt("width", 10, 9999));
+        ret.add(new ParameterInt("height", 10, 9999));
+        ret.add(new ParameterBoolean("useVisualBounds"));
+        ret.add(new ParameterBoolean("preserveAux"));
+        return ret;
     }
-
-    @Override
-    public ValueType[] getParamTypes()
-    {
-        return paramTypes;
-    }
-
+    
     public String getUrl()
     {
         return urlstring;
@@ -139,26 +142,6 @@ public class CSSBoxTreeProvider extends BaseBoxTreeProvider
     public void setReplaceImagesWithAlt(boolean replaceImagesWithAlt)
     {
         this.replaceImagesWithAlt = replaceImagesWithAlt;
-    }
-
-    @Override
-    public Object[] getParamRange(String name)
-    {
-        Object[] ret = new Object[2];
-        switch (name)
-        {
-            case "width":
-            case "height":
-                ret[0] = 0;
-                ret[1] = 9999;
-                return ret;
-            case "url":
-                ret[0] = 0;
-                ret[1] = 64;
-                return ret;
-            default:
-                return super.getParamRange(name);
-        }
     }
 
     @Override
