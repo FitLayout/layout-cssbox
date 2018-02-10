@@ -124,7 +124,7 @@ public class CSSBoxTreeBuilder
             //wrap the page with a new block box
             DefaultBox pageBox = new DefaultBox();
             pageBox.setPage(page);
-            pageBox.add(root);
+            pageBox.appendChild(root);
             pageBox.setTagName("page");
             pageBox.setDisplayType(DisplayType.BLOCK);
             pageBox.setBounds(new Rectangular(root.getBounds()));
@@ -136,7 +136,7 @@ public class CSSBoxTreeBuilder
             log.info("Rendered: {}x{}", pageBox.getWidth(), pageBox.getHeight());
             
             //add to the root
-            main.add(pageBox);
+            main.appendChild(pageBox);
             twidth = Math.max(twidth, pageBox.getWidth());
             theight = theight + pageBox.getHeight();
         }
@@ -394,14 +394,14 @@ public class CSSBoxTreeBuilder
             
             if (node.isRootNode())
             {
-                root.add(node);
+                root.appendChild(node);
                 it.remove();
             }
         }
         
         //recursively choose the children
         for (int i = 0; i < root.getChildCount(); i++)
-            root.getChildBox(i).takeChildren(list);
+            ((BoxNode) root.getChildAt(i)).takeChildren(list);
         
         return root;
     }
@@ -418,7 +418,7 @@ public class CSSBoxTreeBuilder
         root.setBackgroundSeparated(!newbg.equals(currentbg));
         
         for (int i = 0; i < root.getChildCount(); i++)
-            computeBackgrounds(root.getChildBox(i), newbg);
+            computeBackgrounds((BoxNode) root.getChildAt(i), newbg);
     }
     
     //===================================================================

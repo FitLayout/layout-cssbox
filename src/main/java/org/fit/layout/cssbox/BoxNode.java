@@ -25,7 +25,7 @@ import org.fit.cssbox.layout.ReplacedContent;
 import org.fit.cssbox.layout.ReplacedImage;
 import org.fit.cssbox.layout.TextBox;
 import org.fit.cssbox.layout.Viewport;
-import org.fit.layout.impl.GenericTreeNode;
+import org.fit.layout.impl.DefaultTreeNode;
 import org.fit.layout.model.Border;
 import org.fit.layout.model.Border.Side;
 import org.fit.layout.model.Border.Style;
@@ -46,7 +46,7 @@ import cz.vutbr.web.css.CSSProperty.BorderStyle;
  * 
  * @author burgetr
  */
-public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
+public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implements org.fit.layout.model.Box
 {
     /** Overlapping threshold - the corners are considered to overlap if the boxes
      *  share more than OVERLAP pixels */
@@ -101,7 +101,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
      */
     public BoxNode(Box box, Page page)
     {
-        super();
+        super(org.fit.layout.model.Box.class);
         this.box = box;
         this.page = page;
         //copy the bounds from the box
@@ -278,7 +278,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
         	Rectangular ret = null;
             for (int i = 0; i < getChildCount(); i++)
             {
-                BoxNode subnode = getChildBox(i); 
+                BoxNode subnode = (BoxNode) getChildAt(i); 
                 Box sub = subnode.getBox();
                 Rectangular sb = subnode.getVisualBounds();
                 if (sub.isDisplayed() && subnode.isVisible() && sb.getWidth() > 0 && sb.getHeight() > 0)
@@ -374,7 +374,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
     public void recomputeVisualBounds()
     {
         for (int i = 0; i < getChildCount(); i++)
-            getChildBox(i).recomputeVisualBounds();
+            ((BoxNode) getChildAt(i)).recomputeVisualBounds();
         visual = computeVisualBounds();
     }
     
@@ -388,7 +388,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
         bounds = new Rectangular(visual);
         for (int i = 0; i < getChildCount(); i++)
         {
-            BoxNode child = getChildBox(i);
+            BoxNode child = (BoxNode) getChildAt(i);
             child.recomputeBounds();
             expandToEnclose(child);
         }
@@ -710,7 +710,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
     public void applyTransformRecursively(BoxTransform trans)
     {
         for (int i = 0; i < getChildCount(); i++)
-            getChildBox(i).applyTransformRecursively(trans);
+            ((BoxNode) getChildAt(i)).applyTransformRecursively(trans);
     }
     
     public void applyTransforms()
@@ -726,7 +726,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
         List<BoxNode> toRemove = new ArrayList<>();
         for (int i = 0; i < getChildCount(); i++)
         {
-            BoxNode child = getChildBox(i); 
+            BoxNode child = (BoxNode) getChildAt(i); 
             child.applyTransforms();
             if (!this.getVisualBounds().intersects(child.getVisualBounds()))
                 toRemove.add(child);
@@ -734,7 +734,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
         if (!toRemove.isEmpty())
         {
             for (BoxNode child : toRemove)
-                remove(child);
+                removeChild(child);
             recomputeVisualBounds();
             visual = transform.transformRect(visual);
         }
@@ -748,26 +748,6 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
     public Box getBox()
     {
         return box;
-    }
-    
-    /**
-     * @return the parent box of this box in the tree
-     */
-    @Override
-    public org.fit.layout.model.Box getParentBox()
-    {
-        return (org.fit.layout.model.Box) getParent();
-    }
-
-    /**
-     * Returns a specified child box.
-     * @param index the child index
-     * @return the specified child box
-     */
-    @Override
-    public BoxNode getChildBox(int index)
-    {
-        return (BoxNode) getChildAt(index);
     }
     
     /**
@@ -1008,14 +988,14 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
             BoxNode node = it.next();
             if (node.nearestParent.equals(this))    
             {
-                add(node);
+                appendChild(node);
                 it.remove();
             }
         }
         
         //let the children take their children
         for (int i = 0; i < getChildCount(); i++)
-            getChildBox(i).takeChildren(list);
+            ((BoxNode) getChildAt(i)).takeChildren(list);
     }
     
     /**
@@ -1053,7 +1033,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
             {
                 if (ret.trim().length() > 0)
                     ret += " ";
-                ret = ret + recursiveGetText(root.getChildBox(i)).trim();
+                ret = ret + recursiveGetText((BoxNode) root.getChildAt(i)).trim();
             }
             return ret;
         }
@@ -1139,7 +1119,7 @@ public class BoxNode extends GenericTreeNode implements org.fit.layout.model.Box
         getBounds().move(xofs, yofs);
         getContentBounds().move(xofs, yofs);
         getVisualBounds().move(xofs, yofs);
-        for (GenericTreeNode child : getChildren())
+        for (org.fit.layout.model.Box child : getChildren())
         {
             ((BoxNode) child).move(xofs, yofs);
         }
