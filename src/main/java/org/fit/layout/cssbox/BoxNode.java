@@ -1039,6 +1039,16 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
         }
     }
 
+    @Override
+    public String getOwnText()
+    {
+        final Box box = getBox();
+        if (box instanceof TextBox)
+            return ((TextBox) box).getText();
+        else
+            return null;
+    }
+
     //==================================================================================
     
     @Override
@@ -1328,6 +1338,20 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
                 default:
                     return DisplayType.BLOCK; //this should not happen
             }
+        }
+        else
+            return null;
+    }
+
+    @Override
+    public Rectangular getSubstringBounds(int startPos, int endPos)
+    {
+        final String t = getOwnText();
+        if (t != null)
+        {
+            Rectangular ret = new Rectangular(getContentBounds());
+            //TODO use the text box here
+            return ret;
         }
         else
             return null;
