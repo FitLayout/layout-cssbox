@@ -1346,11 +1346,15 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
     @Override
     public Rectangular getSubstringBounds(int startPos, int endPos)
     {
-        final String t = getOwnText();
-        if (t != null)
+        Box box = getBox();
+        if (box instanceof TextBox)
         {
-            Rectangular ret = new Rectangular(getContentBounds());
-            //TODO use the text box here
+            Rectangular ret = getVisualBounds();
+            int origin = ret.getX1();
+            int startOfs = ((TextBox) box).getCharOffsetX(startPos);
+            int endOfs = ((TextBox) box).getCharOffsetX(endPos);
+            ret.setX1(origin + startOfs);
+            ret.setX2(origin + endOfs);
             return ret;
         }
         else
