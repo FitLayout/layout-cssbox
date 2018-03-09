@@ -1349,7 +1349,7 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
         Box box = getBox();
         if (box instanceof TextBox)
         {
-            Rectangular ret = getVisualBounds();
+            Rectangular ret = new Rectangular(getVisualBounds());
             int origin = ret.getX1();
             int startOfs = ((TextBox) box).getCharOffsetX(startPos);
             int endOfs = ((TextBox) box).getCharOffsetX(endPos);
