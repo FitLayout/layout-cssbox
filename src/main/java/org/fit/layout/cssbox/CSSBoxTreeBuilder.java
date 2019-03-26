@@ -76,6 +76,8 @@ public class CSSBoxTreeBuilder
     /** a counter for assigning the box order */
     private int order_counter;
     
+    private float zoom;
+    
    
     public CSSBoxTreeBuilder(Dimension pageSize, boolean useVisualBounds, boolean preserveAux, boolean replaceImagesWithAlt)
     {
@@ -83,8 +85,19 @@ public class CSSBoxTreeBuilder
         this.useVisualBounds = useVisualBounds;
         this.preserveAux = preserveAux;
         this.replaceImagesWithAlt = replaceImagesWithAlt;
+        this.zoom = 1.0f;
     }
     
+    public float getZoom()
+    {
+        return zoom;
+    }
+
+    public void setZoom(float zoom)
+    {
+        this.zoom = zoom;
+    }
+
     public void parse(URL url) throws IOException, SAXException
     {
         //render the page
@@ -284,6 +297,7 @@ public class CSSBoxTreeBuilder
             //two-phase algorithm considering the visual bounds
             log.trace("A1");
             BoxNode root = createBoxTree(rootbox, boxlist, true, true, true); //create a nesting tree based on the content bounds
+            System.out.println("ZOOM " + zoom);
             log.trace("A2");
             Color bg = rootbox.getBgcolor();
             if (bg == null) bg = Color.WHITE;
@@ -294,6 +308,7 @@ public class CSSBoxTreeBuilder
             root = createBoxTree(rootbox, boxlist, true, true, preserveAux); //create the nesting tree based on the visual bounds or content bounds depending on the settings
             root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
             root.recomputeBounds(); //compute the real bounds of each node
+            applyZoom(root, zoom);
             log.trace("A4");
             //root.applyTransforms(); //TODO test this first; actually the transform should be applied according to the drawing tree, not this tree
             return root;
@@ -420,6 +435,24 @@ public class CSSBoxTreeBuilder
         
         for (int i = 0; i < root.getChildCount(); i++)
             computeBackgrounds((BoxNode) root.getChildAt(i), newbg);
+    }
+    
+    private void applyZoom(BoxNode root, float zoom)
+    {
+        zoomRectangular(root.getBounds(), zoom);
+        zoomRectangular(root.getContentBounds(), zoom);
+        for (int i = 0; i < root.getChildCount(); i++)
+            applyZoom((BoxNode) root.getChildAt(i), zoom);
+    }
+    
+    private void zoomRectangular(Rectangular rect, float zoom)
+    {
+        System.out.println("from " + rect);
+        rect.setX1(Math.round(rect.getX1() * zoom));
+        rect.setY1(Math.round(rect.getY1() * zoom));
+        rect.setX2(Math.round(rect.getX2() * zoom));
+        rect.setY2(Math.round(rect.getY2() * zoom));
+        System.out.println("to " + rect);
     }
     
     //===================================================================
