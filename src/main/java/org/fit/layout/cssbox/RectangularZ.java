@@ -1,0 +1,39 @@
+/**
+ * RectangularZ.java
+ *
+ * Created on 27. 3. 2019, 15:19:58 by burgetr
+ */
+package org.fit.layout.cssbox;
+
+import org.fit.layout.model.Rectangular;
+
+/**
+ * Zoomed rectangular.
+ * @author burgetr
+ */
+public class RectangularZ extends Rectangular
+{
+    
+    public RectangularZ(java.awt.Rectangle src, float zoomFactor)
+    {
+        super(src);
+        zoom(zoomFactor);
+    }
+    
+    public RectangularZ(int x1, int y1, float zoomFactor)
+    {
+        super(x1, y1);
+        zoom(zoomFactor);
+    }
+    
+    private void zoom(float zoom)
+    {
+        System.out.print(this + " *" + zoom + " -> ");
+        x1 = Math.round(x1 * zoom);
+        y1 = Math.round(y1 * zoom);
+        x2 = Math.round(x2 * zoom);
+        y2 = Math.round(y2 * zoom);
+        System.out.println(this);
+    }
+
+}

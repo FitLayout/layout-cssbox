@@ -112,8 +112,8 @@ public class CSSBoxTreeBuilder
         
         //initialize the page
         pg.setRoot(root);
-        pg.setWidth(rootbox.getWidth());
-        pg.setHeight(rootbox.getHeight());
+        pg.setWidth(root.getWidth());
+        pg.setHeight(root.getHeight());
     }
     
     public void parseList(List<URL> list) throws IOException, SAXException
@@ -308,7 +308,6 @@ public class CSSBoxTreeBuilder
             root = createBoxTree(rootbox, boxlist, true, true, preserveAux); //create the nesting tree based on the visual bounds or content bounds depending on the settings
             root.recomputeVisualBounds(); //compute the visual bounds for the whole tree
             root.recomputeBounds(); //compute the real bounds of each node
-            applyZoom(root, zoom);
             log.trace("A4");
             //root.applyTransforms(); //TODO test this first; actually the transform should be applied according to the drawing tree, not this tree
             return root;
@@ -340,7 +339,7 @@ public class CSSBoxTreeBuilder
         {
             if (!(root instanceof Viewport) && root.isVisible())
             {
-                BoxNode newnode = new BoxNode(root, page);
+                BoxNode newnode = new BoxNode(root, page, zoom);
                 newnode.setOrder(order_counter++);
                 list.add(newnode);
             }
@@ -371,7 +370,7 @@ public class CSSBoxTreeBuilder
         Vector<BoxNode> list = new Vector<BoxNode>(boxlist);
 
         //an artificial root node
-        BoxNode root = new BoxNode(rootbox, page);
+        BoxNode root = new BoxNode(rootbox, page, zoom);
         root.setOrder(0);
         //detach the nodes from any old trees
         for (BoxNode node : list)
@@ -435,24 +434,6 @@ public class CSSBoxTreeBuilder
         
         for (int i = 0; i < root.getChildCount(); i++)
             computeBackgrounds((BoxNode) root.getChildAt(i), newbg);
-    }
-    
-    private void applyZoom(BoxNode root, float zoom)
-    {
-        zoomRectangular(root.getBounds(), zoom);
-        zoomRectangular(root.getContentBounds(), zoom);
-        for (int i = 0; i < root.getChildCount(); i++)
-            applyZoom((BoxNode) root.getChildAt(i), zoom);
-    }
-    
-    private void zoomRectangular(Rectangular rect, float zoom)
-    {
-        System.out.println("from " + rect);
-        rect.setX1(Math.round(rect.getX1() * zoom));
-        rect.setY1(Math.round(rect.getY1() * zoom));
-        rect.setX2(Math.round(rect.getX2() * zoom));
-        rect.setY2(Math.round(rect.getY2() * zoom));
-        System.out.println("to " + rect);
     }
     
     //===================================================================

@@ -93,17 +93,21 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
     /** Potential nearest parent node in the box tree */
     public BoxNode nearestParent = null;
     
+    /** Zoom relative to original box sizes */
+    public float zoom;
+    
     //===================================================================================
     
     /**
      * Creates a new node containing a box.
      * @param box the contained box
      */
-    public BoxNode(Box box, Page page)
+    public BoxNode(Box box, Page page, float zoom)
     {
         super(org.fit.layout.model.Box.class);
         this.box = box;
         this.page = page;
+        this.zoom = zoom;
         //copy the bounds from the box
         if (box != null)
         {
@@ -270,9 +274,9 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
     {
         final Box box = getBox();
         if (box instanceof TextBox)
-            return new Rectangular(box.getAbsoluteBounds().intersection(box.getClipBlock().getClippedContentBounds()));
+            return new RectangularZ(box.getAbsoluteBounds().intersection(box.getClipBlock().getClippedContentBounds()), zoom);
         else if (box != null && box.isReplaced())
-            return new Rectangular(box.getMinimalAbsoluteBounds().intersection(box.getClipBlock().getClippedContentBounds()));
+            return new RectangularZ(box.getMinimalAbsoluteBounds().intersection(box.getClipBlock().getClippedContentBounds()), zoom);
         else
         {
         	Rectangular ret = null;
@@ -293,7 +297,7 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
             if (ret == null)
             {
                 Rectangle b = box.getAbsoluteBounds().intersection(box.getClipBlock().getClippedContentBounds());
-            	return new Rectangular(b.x, b.y);
+            	return new RectangularZ(b.x, b.y, zoom);
             }
             else
             	return ret;
@@ -319,7 +323,7 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
         
         if (box instanceof Viewport)
         {
-            ret = new Rectangular(((Viewport) box).getClippedBounds());
+            ret = new RectangularZ(((Viewport) box).getClippedBounds(), zoom);
         }
         else if (box instanceof ElementBox)
         {
@@ -327,26 +331,26 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
             //one border only -- the box represents the border only
             if (getBorderCount() == 1 && !isBackgroundSeparated())
             {
-            	Rectangular b = new Rectangular(elem.getAbsoluteBorderBounds().intersection(elem.getClipBlock().getClippedContentBounds())); //clipped absolute bounds
+            	Rectangular b = new RectangularZ(elem.getAbsoluteBorderBounds().intersection(elem.getClipBlock().getClippedContentBounds()), zoom); //clipped absolute bounds
             	if (hasTopBorder())
-            		ret = new Rectangular(b.getX1(), b.getY1(), b.getX2(), b.getY1() + elem.getBorder().top - 1);
+            		ret = new Rectangular(b.getX1(), b.getY1(), b.getX2(), b.getY1() + zoom(elem.getBorder().top) - 1);
             	else if (hasBottomBorder())
-            		ret = new Rectangular(b.getX1(), b.getY2() - elem.getBorder().bottom + 1, b.getX2(), b.getY2());
+            		ret = new Rectangular(b.getX1(), b.getY2() - zoom(elem.getBorder().bottom) + 1, b.getX2(), b.getY2());
             	else if (hasLeftBorder())
-            		ret = new Rectangular(b.getX1(), b.getY1(), b.getX1() + elem.getBorder().left - 1, b.getY2());
+            		ret = new Rectangular(b.getX1(), b.getY1(), b.getX1() + zoom(elem.getBorder().left) - 1, b.getY2());
             	else if (hasRightBorder())
-            		ret = new Rectangular(b.getX2() - elem.getBorder().right + 1, b.getY1(), b.getX2(), b.getY2());
+            		ret = new Rectangular(b.getX2() - zoom(elem.getBorder().right) + 1, b.getY1(), b.getX2(), b.getY2());
             }
             //at least two borders or a border and background - take the border bounds
             else if (getBorderCount() >= 2 || (getBorderCount() == 1 && isBackgroundSeparated()))
             {
-                ret = new Rectangular(elem.getAbsoluteBorderBounds().intersection(elem.getClipBlock().getClippedContentBounds()));
+                ret = new RectangularZ(elem.getAbsoluteBorderBounds().intersection(elem.getClipBlock().getClippedContentBounds()), zoom);
             }
             
             //consider the background if different from the parent
             if (isBackgroundSeparated())
             {
-                Rectangular bg = new Rectangular(elem.getAbsoluteBackgroundBounds().intersection(elem.getClipBlock().getClippedContentBounds()));
+                Rectangular bg = new RectangularZ(elem.getAbsoluteBackgroundBounds().intersection(elem.getClipBlock().getClippedContentBounds()), zoom);
                 if (ret == null)
                     ret = bg;
                 else
@@ -406,7 +410,7 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
         
         if (box instanceof Viewport)
         {
-            ret = new Rectangular(((Viewport) box).getClippedBounds());
+            ret = new RectangularZ(((Viewport) box).getClippedBounds(), zoom);
         }
         else if (box instanceof ElementBox)
         {
@@ -416,21 +420,21 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
             if (elem.getBorder().top > 0 || elem.getBorder().left > 0 ||
                 elem.getBorder().bottom > 0 || elem.getBorder().right > 0)
             {
-                ret = new Rectangular(elem.getAbsoluteBorderBounds());
+                ret = new RectangularZ(elem.getAbsoluteBorderBounds(), zoom);
             }
             //no border
             else
             {
-                ret = new Rectangular(elem.getAbsoluteBackgroundBounds());
+                ret = new RectangularZ(elem.getAbsoluteBackgroundBounds(), zoom);
             }
         }
         else //not an element - return the whole box
-            ret = new Rectangular(box.getAbsoluteBounds());
+            ret = new RectangularZ(box.getAbsoluteBounds(), zoom);
 
         //clip with the clipping bounds
         if (box.getClipBlock() != null)
         {
-            Rectangular clip = new Rectangular(box.getClipBlock().getClippedContentBounds());
+            Rectangular clip = new RectangularZ(box.getClipBlock().getClippedContentBounds(), zoom);
             ret = ret.intersection(clip);
         }
         
@@ -1361,4 +1365,9 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
             return null;
     }
 
+    private int zoom(int src)
+    {
+        return Math.round(src * zoom);
+    }
+    
 }
