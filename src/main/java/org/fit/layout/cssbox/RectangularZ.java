@@ -28,12 +28,10 @@ public class RectangularZ extends Rectangular
     
     private void zoom(float zoom)
     {
-        System.out.print(this + " *" + zoom + " -> ");
         x1 = Math.round(x1 * zoom);
         y1 = Math.round(y1 * zoom);
         x2 = Math.round(x2 * zoom);
         y2 = Math.round(y2 * zoom);
-        System.out.println(this);
     }
 
 }
