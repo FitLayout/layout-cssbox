@@ -53,7 +53,7 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
     
     /** Which percentage of the box area must be inside of another box in order
      * to consider it as a child box (from 0 to 1) */
-    private static final double AREAP = 0.9;
+    private static final double AREAP = 0.85;
     
     /** The CSSBox box that forms this node */
     protected Box box;
@@ -778,22 +778,17 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
      */
     public boolean visuallyEncloses(BoxNode childNode)
     {
-        int cx1 = childNode.getVisualBounds().getX1();
-        int cy1 = childNode.getVisualBounds().getY1();
-        int cx2 = childNode.getVisualBounds().getX2();
-        int cy2 = childNode.getVisualBounds().getY2();
-        int px1 = getVisualBounds().getX1();
-        int py1 = getVisualBounds().getY1();
-        int px2 = getVisualBounds().getX2();
-        int py2 = getVisualBounds().getY2();
+        final int cx1 = childNode.getVisualBounds().getX1();
+        final int cy1 = childNode.getVisualBounds().getY1();
+        final int cx2 = childNode.getVisualBounds().getX2();
+        final int cy2 = childNode.getVisualBounds().getY2();
+        final int px1 = getVisualBounds().getX1();
+        final int py1 = getVisualBounds().getY1();
+        final int px2 = getVisualBounds().getX2();
+        final int py2 = getVisualBounds().getY2();
         
-        /*if (this.toString().contains("pBody") && childNode.toString().contains("mediawiki"))
-            System.out.println(childNode + " inside of " + this);
-        if (childNode.toString().contains("www-lupa-cz") && this.toString().contains("[page]"))
-            System.out.println(childNode + " inside of " + this);*/
-        /*if (this.getOrder() == 70 && childNode.getOrder() == 74)
+        /*if (childNode.toString().contains("09H (653,707,706,736)") && this.toString().contains("+35"))
             System.out.println("jo!");*/
-        
         
         //check how many corners of the child are inside enough (with some overlap)
         int ccnt = 0;
@@ -826,8 +821,8 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
         if (px2 >= cx1 && px2 <= cx2 &&
             py2 >= cy1 && py2 <= cy2) rxcnt++; //bottom right
         //shared areas
-        int shared = getVisualBounds().intersection(childNode.getVisualBounds()).getArea();
-        double sharedperc = (double) shared / childNode.getBounds().getArea();
+        final int shared = getVisualBounds().intersection(childNode.getVisualBounds()).getArea();
+        final double sharedperc = (double) shared / childNode.getBounds().getArea();
         
         //no overlap
         if (xcnt == 0)
@@ -857,53 +852,17 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
      * @param childNode the node to check
      * @return <code>true</code> if the child node is completely inside this node, <code>false</code> otherwise 
      */
-    public boolean visuallyEncloses1(BoxNode childNode)
-    {
-        int cx1 = childNode.getVisualBounds().getX1();
-        int cy1 = childNode.getVisualBounds().getY1();
-        int cx2 = childNode.getVisualBounds().getX2();
-        int cy2 = childNode.getVisualBounds().getY2();
-        int px1 = getVisualBounds().getX1();
-        int py1 = getVisualBounds().getY1();
-        int px2 = getVisualBounds().getX2();
-        int py2 = getVisualBounds().getY2();
-        
-        //check how many corners of the child are inside the parent exactly
-        int xcnt = 0;
-        if (cx1 >= px1 && cx1 <= px2 &&
-            cy1 >= py1 && cy1 <= py2) xcnt++; //top left
-        if (cx2 >= px1 && cx2 <= px2 &&
-            cy1 >= py1 && cy1 <= py2) xcnt++; //top right
-        if (cx1 >= px1 && cx1 <= px2 &&
-            cy2 >= py1 && cy2 <= py2) xcnt++; //bottom left
-        if (cx2 >= px1 && cx2 <= px2 &&
-            cy2 >= py1 && cy2 <= py2) xcnt++; //bottom right
-        
-        /*if (childNode.toString().contains("globalWrapper") && this.toString().contains("mediawiki"))
-            System.out.println("jo!");*/
-        
-        if ((cx1 == px1 && cy1 == py1 && cx2 == px2 && cy2 == py2)) //exact overlap
-           return this.getOrder() < childNode.getOrder();
-        else
-            return xcnt == 4;
-    }
-    
-    /** 
-     * Checks if another node is fully located inside the content bounds of this box.
-     * @param childNode the node to check
-     * @return <code>true</code> if the child node is completely inside this node, <code>false</code> otherwise 
-     */
     public boolean contentEncloses(BoxNode childNode)
     {
     	//System.out.println(childNode + " => " + childNode.getVisualBounds());
-        int cx1 = childNode.getContentBounds().getX1();
-        int cy1 = childNode.getContentBounds().getY1();
-        int cx2 = childNode.getContentBounds().getX2();
-        int cy2 = childNode.getContentBounds().getY2();
-        int px1 = getContentBounds().getX1();
-        int py1 = getContentBounds().getY1();
-        int px2 = getContentBounds().getX2();
-        int py2 = getContentBounds().getY2();
+        final int cx1 = childNode.getContentBounds().getX1();
+        final int cy1 = childNode.getContentBounds().getY1();
+        final int cx2 = childNode.getContentBounds().getX2();
+        final int cy2 = childNode.getContentBounds().getY2();
+        final int px1 = getContentBounds().getX1();
+        final int py1 = getContentBounds().getY1();
+        final int px2 = getContentBounds().getX2();
+        final int py2 = getContentBounds().getY2();
         
         //check how many corners of the child are inside the parent exactly
         int xcnt = 0;
@@ -934,15 +893,15 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
      * Takes a list of nodes and selects the nodes that are located directly inside 
      * of this node's box. The {@code nearestParent} of the selected boxes is set to this box.
      * @param list the list of nodes to test
-     * @param full when set to true, all the nodes within the box content bounds are considered.
-     *          Otherwise, only the boxes within the visual bounds are considered.
+     * @param useVisualBounds when set to {@code true}, only the boxes within the visual bounds are considered.
+     *          Otherwise, all the nodes within the box content bounds are considered.
      */
-    public void markNodesInside(List<BoxNode> list, boolean full)
+    public void markNodesInside(List<BoxNode> list, boolean useVisualBounds)
     {
         for (Iterator<BoxNode> it = list.iterator(); it.hasNext();)
         {
             BoxNode node = it.next();
-            if (full)
+            if (!useVisualBounds) //use the content bounds instead
             {
                 if (node != this 
                     && this.contentEncloses(node)
