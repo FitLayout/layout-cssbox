@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.fit.cssbox.css.CSSUnits;
 import org.fit.cssbox.layout.BlockReplacedBox;
@@ -938,7 +937,7 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
      * @param full when set to true, all the nodes within the box content bounds are considered.
      *          Otherwise, only the boxes within the visual bounds are considered.
      */
-    public void markNodesInside(Vector<BoxNode> list, boolean full)
+    public void markNodesInside(List<BoxNode> list, boolean full)
     {
         for (Iterator<BoxNode> it = list.iterator(); it.hasNext();)
         {
@@ -969,7 +968,7 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
      * The {@code nearestParent} of the selected boxes is set to this box node.
      * @param list the list of nodes to test
      */
-    public void markChildNodes(Vector<BoxNode> list)
+    public void markChildNodes(List<BoxNode> list)
     {
         final Box thisBox = this.getBox(); 
         for (Iterator<BoxNode> it = list.iterator(); it.hasNext();)
@@ -985,7 +984,7 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
      * and makes them the children of this node. Then, recursively calls the children to take
      * their nodes.
      */
-	public void takeChildren(Vector<BoxNode> list)
+	public void takeChildren(List<BoxNode> list)
     {
         for (Iterator<BoxNode> it = list.iterator(); it.hasNext();)
         {

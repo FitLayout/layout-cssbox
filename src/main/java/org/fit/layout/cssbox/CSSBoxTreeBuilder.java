@@ -17,7 +17,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.fit.cssbox.css.CSSNorm;
@@ -287,7 +286,7 @@ public class CSSBoxTreeBuilder
     {
         //create the working list of nodes
         log.trace("LIST");
-        Vector<BoxNode> boxlist = new Vector<BoxNode>();
+        List<BoxNode> boxlist = new ArrayList<BoxNode>();
         order_counter = 1;
         createBoxList(rootbox, boxlist);
         
@@ -297,7 +296,6 @@ public class CSSBoxTreeBuilder
             //two-phase algorithm considering the visual bounds
             log.trace("A1");
             BoxNode root = createBoxTree(rootbox, boxlist, true, true, true); //create a nesting tree based on the content bounds
-            System.out.println("ZOOM " + zoom);
             log.trace("A2");
             Color bg = rootbox.getBgcolor();
             if (bg == null) bg = Color.WHITE;
@@ -333,7 +331,7 @@ public class CSSBoxTreeBuilder
      * @param root the source root box
      * @param list the list that will be filled with the nodes
      */
-    private void createBoxList(Box root, Vector<BoxNode> list)
+    private void createBoxList(Box root, List<BoxNode> list)
     {
         if (root.isDisplayed())
         {
@@ -364,10 +362,10 @@ public class CSSBoxTreeBuilder
      * @param preserveAux when set to {@code true}, all boxes are preserved. Otherwise, only the visually
      * distinguished ones are preserved.
      */
-    private BoxNode createBoxTree(ElementBox rootbox, Vector<BoxNode> boxlist, boolean useBounds, boolean useVisualBounds, boolean preserveAux)
+    private BoxNode createBoxTree(ElementBox rootbox, List<BoxNode> boxlist, boolean useBounds, boolean useVisualBounds, boolean preserveAux)
     {
         //a working copy of the box list
-        Vector<BoxNode> list = new Vector<BoxNode>(boxlist);
+        List<BoxNode> list = new ArrayList<BoxNode>(boxlist);
 
         //an artificial root node
         BoxNode root = new BoxNode(rootbox, page, zoom);
