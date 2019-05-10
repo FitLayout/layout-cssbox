@@ -53,7 +53,7 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
     
     /** Which percentage of the box area must be inside of another box in order
      * to consider it as a child box (from 0 to 1) */
-    private static final double AREAP = 0.85;
+    private static final double AREAP = 0.8;
     
     /** The CSSBox box that forms this node */
     protected Box box;
@@ -787,7 +787,41 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
         final int px2 = getVisualBounds().getX2();
         final int py2 = getVisualBounds().getY2();
         
-        /*if (childNode.toString().contains("09H (653,707,706,736)") && this.toString().contains("+35"))
+        /*if (childNode.toString().contains("7 (45,765,64,801)") && this.toString().contains("+39"))
+            System.out.println("jo!");*/
+        
+        //how many corners of the parent are inside of the child
+        int rxcnt = 0;
+        if (px1 >= cx1 && px1 <= cx2 &&
+            py1 >= cy1 && py1 <= cy2) rxcnt++; //top left
+        if (px2 >= cx1 && px2 <= cx2 &&
+            py1 >= cy1 && py1 <= cy2) rxcnt++; //top right
+        if (px1 >= cx1 && px1 <= cx2 &&
+            py2 >= cy1 && py2 <= cy2) rxcnt++; //bottom left
+        if (px2 >= cx1 && px2 <= cx2 &&
+            py2 >= cy1 && py2 <= cy2) rxcnt++; //bottom right
+        //shared areas
+        final int shared = getVisualBounds().intersection(childNode.getVisualBounds()).getArea();
+        final double sharedperc = (double) shared / childNode.getBounds().getArea();
+        
+        if (rxcnt == 4)
+            return false; //reverse relation - the child contains the parent
+        else
+            return this.getOrder() < childNode.getOrder() && sharedperc >= AREAP;
+    }
+
+    public boolean visuallyEnclosesOld(BoxNode childNode)
+    {
+        final int cx1 = childNode.getVisualBounds().getX1();
+        final int cy1 = childNode.getVisualBounds().getY1();
+        final int cx2 = childNode.getVisualBounds().getX2();
+        final int cy2 = childNode.getVisualBounds().getY2();
+        final int px1 = getVisualBounds().getX1();
+        final int py1 = getVisualBounds().getY1();
+        final int px2 = getVisualBounds().getX2();
+        final int py2 = getVisualBounds().getY2();
+        
+        /*if (childNode.toString().contains("7 (45,765,64,801)") && this.toString().contains("+39"))
             System.out.println("jo!");*/
         
         //check how many corners of the child are inside enough (with some overlap)
@@ -826,11 +860,11 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
         
         //no overlap
         if (xcnt == 0)
-        	return false;
+            return false;
         //fully overlapping or over a corner - the order decides
         else if ((cx1 == px1 && cy1 == py1 && cx2 == px2 && cy2 == py2) //full overlap
-        	     || (ccnt == 1 && xcnt <= 1)) //over a corner
-        	return this.getOrder() < childNode.getOrder() && sharedperc >= AREAP;
+                 || (ccnt == 1 && xcnt <= 1)) //over a corner
+            return this.getOrder() < childNode.getOrder() && sharedperc >= AREAP;
         //fully inside
         else if (xcnt == 4)
             return true;
@@ -846,7 +880,7 @@ public class BoxNode extends DefaultTreeNode<org.fit.layout.model.Box> implement
         else
             return false;
     }
-
+    
     /** 
      * Checks if another node is fully located inside the content bounds of this box.
      * @param childNode the node to check
