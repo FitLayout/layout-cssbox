@@ -56,12 +56,12 @@
 		<dependency>
 			<groupId>net.sf.cssbox</groupId>
 			<artifactId>cssbox</artifactId>
-			<version>4.16-SNAPSHOT</version>
+			<version>4.16</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.cssbox</groupId>
 			<artifactId>pdf2dom</artifactId>
-			<version>1.9-SNAPSHOT</version>
+			<version>1.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
